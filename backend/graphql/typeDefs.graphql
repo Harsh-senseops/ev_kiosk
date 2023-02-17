@@ -1,0 +1,38 @@
+type Query {
+  getAllZonesDetails: [Zones]
+  getAllProductionDetails: [ProductionCountDetails]
+  getAllUsers: [Users]
+  getTodayProductionCount: [ProductionCountDetails]
+}
+
+type Users {
+  userId: Int
+  userName: String
+  userPassword: String
+}
+
+type ProductionCountDetails {
+  Zone: Int
+  Shift: String
+  ProductionCount: Int
+  Date: String
+}
+
+type Zones {
+  ZoneId: Int
+  ZoneName: String
+}
+
+type Mutation {
+  createProductionCount(
+    Zone: Int
+    Shift: String
+    ProductionCount: Int
+  ): ProductionCountDetails!
+}
+
+type Subscription {
+  newProductionCountAdded: ProductionCountDetails!
+}
+
+scalar DateTime

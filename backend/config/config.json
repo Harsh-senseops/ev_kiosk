@@ -1,0 +1,72 @@
+{
+  "development": {
+    "username": "sa",
+    "password": "senseops123",
+    "database": "ev_kiosk",
+    "host": "127.0.0.1",
+    "dialect": "mssql",
+    "port": 1433,  
+    "logging": false,
+    "dialectOptions":{
+      "driver": "SQL Server Native Client 11.0",
+      "instanceName": "WASIM",
+      "trustedConnection": true,
+      "options":{
+        "trustedServerCertificate": true,
+        "encrypt": true,
+        "validateBulkLoadParameters": true
+      },
+      "ssl":{
+        "require": true,
+        "rejectUnauthorized": true
+      }
+    }
+  },
+  "test": {
+    "username": "sa",
+    "password": "senseops123",
+    "database": "ev_kiosk",
+    "host": "127.0.0.1",
+    "dialect": "mssql",
+    "port": 1433,  
+    "logging": false,
+    "dialectOptions":{
+      "driver": "SQL Server Native Client 11.0",
+      "instanceName": "WASIM",
+      "trustedConnection": true,
+      "options":{
+        "trustedServerCertificate": true,
+        "encrypt": true,
+        "validateBulkLoadParameters": true
+      },
+      "ssl":{
+        "require": true,
+        "rejectUnauthorized": true
+      }
+    }
+  },
+  "production": {
+    "username": "sa",
+    "password": "senseops123",
+    "database": "ev_kiosk",
+    "host": "127.0.0.1",
+    "dialect": "mssql",
+    "port": 1433,  
+    "logging": false,
+    "dialectOptions":{
+      "driver": "SQL Server Native Client 11.0",
+      "instanceName": "WASIM",
+      "trustedConnection": true,
+      "options":{
+        "trustedServerCertificate": true,
+        "encrypt": true,
+        "validateBulkLoadParameters": true
+      },
+      "ssl":{
+        "require": true,
+        "rejectUnauthorized": true
+      }
+    }
+  }
+}
+
