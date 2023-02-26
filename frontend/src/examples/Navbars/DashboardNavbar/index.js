@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -71,7 +71,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [openMenu, setOpenMenu] = useState(false);
   const [shift, setShift] = React.useState('');
   const route = useLocation().pathname.split("/").slice(1);
-
+  const navigate = useNavigate()
   const selectData = {
     shift: ["Shift 1", "Shift 2", "Shift 3"]
   }
@@ -148,6 +148,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
     console.log("Go to alert page")
   }
 
+  function logout() {
+    localStorage.setItem('isLoggedIn', "false");
+    navigate("/authentication/sign-in/basic")
+  }
+
   return (
     <AppBar
       position={absolute ? "absolute" : navbarType}
@@ -171,11 +176,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
               {/* </Grid> */}
             </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
-                <IconButton sx={navbarIconButton} size="small" disableRipple>
+              
+                <IconButton onClick={logout} sx={navbarIconButton} size="small" disableRipple>
                   <Icon sx={iconsStyle}>logout</Icon>
                 </IconButton>
-              </Link>
+             
               <IconButton
                 size="small"
                 disableRipple

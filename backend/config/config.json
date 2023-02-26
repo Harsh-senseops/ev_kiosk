@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "sa",
-    "password": "senseops123",
+    "password": "12345678",
     "database": "ev_kiosk",
     "host": "127.0.0.1",
     "dialect": "mssql",
@@ -9,7 +9,7 @@
     "logging": false,
     "dialectOptions":{
       "driver": "SQL Server Native Client 11.0",
-      "instanceName": "WASIM",
+      "instanceName": "MSSQl",
       "trustedConnection": true,
       "options":{
         "trustedServerCertificate": true,

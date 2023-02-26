@@ -3,6 +3,7 @@ type Query {
   getAllProductionDetails: [ProductionCountDetails]
   getAllUsers: [Users]
   getTodayProductionCount: [ProductionCountDetails]
+  findProductionByShift(Shift:String!): [ProductionCountDetails]
 }
 
 type Users {
@@ -16,6 +17,7 @@ type ProductionCountDetails {
   Shift: String
   ProductionCount: Int
   Date: String
+  Id: Int
 }
 
 type Zones {
@@ -29,10 +31,16 @@ type Mutation {
     Shift: String
     ProductionCount: Int
   ): ProductionCountDetails!
+
+  updateProductionCount(
+  Id: Int
+  ProductionCount: Int
+  ): ProductionCountDetails!
 }
 
 type Subscription {
   newProductionCountAdded: ProductionCountDetails!
+  updaatedProductionCount: ProductionCountDetails!
 }
 
 scalar DateTime

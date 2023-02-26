@@ -17,7 +17,6 @@ Coded by www.creative-tim.com
 import Grid from "@mui/material/Grid";
 import Tooltip from "@mui/material/Tooltip";
 import Icon from "@mui/material/Icon";
-
 // Material Dashboard 2 PRO React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -43,10 +42,11 @@ import booking1 from "assets/images/products/product-1-min.jpg";
 import booking2 from "assets/images/products/product-2-min.jpg";
 import booking3 from "assets/images/products/product-3-min.jpg";
 import { RestorePageOutlined } from "@mui/icons-material";
+import { useState } from "react";
 
 function Analytics() {
   const { sales, tasks } = reportsLineChartData;
-
+  console.log("I am from analytics")
   // Action buttons for the BookingCard
   const actionButtons = (
     <>

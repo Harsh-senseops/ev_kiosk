@@ -60,6 +60,7 @@ import ProductPage from "layouts/ecommerce/products/product-page";
 import OrderList from "layouts/ecommerce/orders/order-list";
 import OrderDetails from "layouts/ecommerce/orders/order-details";
 import SignInBasic from "layouts/authentication/sign-in/basic";
+import ProtectedRoute from "util/ProtectedRoute";
 import SignInCover from "layouts/authentication/sign-in/cover";
 import SignInIllustration from "layouts/authentication/sign-in/illustration";
 import SignUpCover from "layouts/authentication/sign-up/cover";
@@ -101,19 +102,19 @@ const routes = [
         name: "Profile",
         key: "my-profile",
         route: "/pages/profile/profile-overview",
-        component: <ProfileOverview />,
+        component:  <ProtectedRoute Component = {ProfileOverview} />,
       },
       {
         name: "Settings",
         key: "profile-settings",
         route: "/pages/account/settings",
-        component: <Settings />,
+        component: <ProtectedRoute Component = {Settings} />,
       },
       {
         name: "Logout",
         key: "logout",
         route: "/authentication/sign-in/basic",
-        component: <SignInBasic />,
+        component: <ProtectedRoute Component = {SignInBasic} />,
       },
     ],
   },
@@ -128,13 +129,13 @@ const routes = [
         name: "Analytics",
         key: "analytics",
         route: "/dashboards/analytics",
-        component: <Analytics />,
+        component: <ProtectedRoute Component = {Analytics} />,
       },
       {
         name: "Planned Production",
         key: "planned-production",
         route: "/dashboards/planned-production",
-        component: <PlannedProduction />,
+        component:  <ProtectedRoute Component = {PlannedProduction} />,
       },
       // {
       //   name: "Main Dashboard",

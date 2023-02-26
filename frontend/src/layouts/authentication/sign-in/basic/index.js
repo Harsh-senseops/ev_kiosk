@@ -45,7 +45,7 @@ function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [items, setItems] = useState(false);
+  const [items, setItems] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,6 +60,10 @@ function Basic() {
 
   const handlePassword = (e) => {
     console.log(e.target.value)
+  }
+
+  function login(){
+    localStorage.setItem('isLoggedIn', JSON.stringify(items));
   }
 
   const handleSubmit = (e) => {
@@ -95,7 +99,7 @@ function Basic() {
               <MDInput type="password" label="Password" fullWidth onChange={e => handlePassword(e)} />
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth type='submit'>
+              <MDButton onClick = {login} variant="gradient" color="info" fullWidth type='submit'>
                 Login
               </MDButton>
             </MDBox>

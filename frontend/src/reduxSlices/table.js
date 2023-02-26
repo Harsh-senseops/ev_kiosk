@@ -1,42 +1,44 @@
-import { createSlice, configureStore } from '@reduxjs/toolkit';
-import * as action from "../reduxConstants/constants"
+import { createSlice } from "@reduxjs/toolkit";
+import * as action from "../reduxConstants/constants";
 const initialState = {
-    name:"Planned Production Count",
-    data:[],
-    tableData:{
-      buttonState:true,
-      shift:"Shift 1",
-      productionCount:[{}],
-      alert:false
-    }
-  };
+  name: "Planned Production Count",
+  data: {
+    A: "",
+    B: "",
+    C: "",
+  },
+  fieldValues: [],
+  shift: "A",
+};
 
-  export const table = createSlice({
-    name: action.TABLE,
-    initialState,
-    reducers: {
-      setTableName: (state, actions) => {
-        state.name = actions.payload
-      },
-      setTodaysData: (state, actions) => {
-        state.data = actions.payload
-      },
-      setShift:(state,actions) => {
-        state.tableData.shift = actions.payload
-      },
-      setProductionCount:(state,actions)=>{
-        state.tableData.productionCount = actions.payload;
-      },
-      setAlert:(state,actions)=>{
-        state.tableData.alert = actions.payload;
-      },
-      setButton:(state,actions)=>{
-        state.tableData.buttonState = actions.payload;
+export const table = createSlice({
+  name: action.TABLE,
+  initialState,
+  reducers: {
+    setTodaysData: (state, actions) => {
+      if (actions.payload.shift === "A") {
+        state.data.A = actions.payload.shiftData;
+      } else if (actions.payload.shift === "B") {
+        state.data.B = actions.payload.shiftData;
+      } else if (actions.payload.shift === "C") {
+        state.data.C = actions.payload.shiftData;
       }
     },
-  });
+    setShift: (state, actions) => {
+      if (actions.payload === "Shift 1") {
+        state.shift = "A";
+      } else if (actions.payload === "Shift 2") {
+        state.shift = "B";
+      } else {
+        state.shift = "C";
+      }
+    },
+    setProductionCount: (state, actions) => {
+      state.fieldValues = actions.payload;
+    },
+  },
+});
 
-export const { setTableName, setTodaysData, setShift, setProductionCount,setAlert,setButton } =
-table.actions;
+export const { setTodaysData, setShift, setProductionCount } = table.actions;
 
 export default table.reducer;
