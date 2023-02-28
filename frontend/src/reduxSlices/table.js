@@ -9,6 +9,7 @@ const initialState = {
   },
   fieldValues: [],
   shift: "A",
+  executeQuery:false,
 };
 
 export const table = createSlice({
@@ -36,9 +37,12 @@ export const table = createSlice({
     setProductionCount: (state, actions) => {
       state.fieldValues = actions.payload;
     },
+    setExecuteQuery: (state, actions) => {
+      state.executeQuery = actions.payload;
+    }
   },
 });
 
-export const { setTodaysData, setShift, setProductionCount } = table.actions;
+export const { setTodaysData, setShift, setProductionCount, setExecuteQuery } = table.actions;
 
 export default table.reducer;

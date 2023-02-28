@@ -61,8 +61,10 @@ import UserContext from "layouts/pages/userContext";
 // graphql url
 const senseopsHTTPServerURL = "http://localhost:4000/graphql";
 const senseopsWSServerURL = "ws://127.0.0.1:4000/graphql";
-// const hmclHTTPServerURL = "http://192.168.84.45:5000/graphql";
-// const hmclWSServerURL = "ws://192.168.84.45:5000/graphql";
+
+
+// const hmclHTTPServerURL = "http://10.79.3.37:5001/graphql";
+// const hmclWSServerURL = "ws://10.79.3.37:5001/graphql";
 
 
 export default function App() {
@@ -227,7 +229,7 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
         {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboards/analytics" />} />
+        <Route path="*" element={<Navigate to="/dashboards/planned-production" />} />
       </Routes>
     </ThemeProvider>
     </UserContext.Provider>

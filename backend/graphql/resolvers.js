@@ -1,4 +1,4 @@
-const { ZoneNames,Planned,users } = require('../models');
+const { ZoneNames,PlannedProductionCount,users } = require('../models');
 const { PubSub } = require('graphql-subscriptions');
 var sequelize = require('../models/index');
 const pubsub = new PubSub();
@@ -18,7 +18,7 @@ const Query = {
 	},
 	getAllProductionDetails: async()=>{
 		try{
-			const prodDetails = await Planned.findAll();
+			const prodDetails = await PlannedProductionCount.findAll();
 			return prodDetails
 		}catch(err){
 			return err
@@ -26,7 +26,7 @@ const Query = {
 	},
 	getTodayProductionCount: async () => {
 		try{
-			const prodDetails = await sequelize.sequelize.query("SELECT * from dbo.Planned where convert(varchar(10), Date, 102) = convert(varchar(10), getdate(), 102)", { type: QueryTypes.SELECT });
+			const prodDetails = await sequelize.sequelize.query("SELECT * from dbo.PlannedProductionCount where convert(varchar(10), Date, 102) = convert(varchar(10), getdate(), 102)", { type: QueryTypes.SELECT });
 			return prodDetails
 		}catch(err){
 			return err
@@ -44,7 +44,7 @@ const Query = {
 		Shift,
 	}) => {
 		try{
-			const details =  await sequelize.sequelize.query("SELECT * from dbo.Planned where convert(varchar(10), Date, 102) = convert(varchar(10), getdate(), 102) AND Shift = :Shift", {
+			const details =  await sequelize.sequelize.query("SELECT * from dbo.PlannedProductionCount where convert(varchar(10), Date, 102) = convert(varchar(10), getdate(), 102) AND Shift = :Shift", {
 				replacements: { Shift: Shift },
 				 type: QueryTypes.SELECT
 				 });
@@ -63,7 +63,7 @@ const Mutation =  {
         ProductionCount,
 	}) =>  {
 		try {
-			var current = await Planned && Planned.create({
+			var current = await PlannedProductionCount && PlannedProductionCount.create({
 				Date,
 		        Zone,
 		        Shift,
@@ -88,11 +88,17 @@ const Mutation =  {
 		ProductionCount
 	}) => {
 		try{
-			const project = await Planned.findByPk(Id);
+			const project = await PlannedProductionCount.findByPk(Id);
 				if (!project) return "Not Found"
 				project.update({
 					ProductionCount:ProductionCount
 				})	
+				pubsub.publish("UPDATED_PRODUCTION_COUNT",{
+					updatedProductionCount:{
+						Date:Date,
+						ProductionCount:ProductionCount
+					}
+				})
 				return project
 		}catch(error){
 			return error;
@@ -104,7 +110,7 @@ const Subscription = {
 	newProductionCountAdded: {
 		  subscribe: () => pubsub.asyncIterator(['COUNT_CREATED']),
 	  },
-	updaatedProductionCount: {
+	  updatedProductionCount: {
 		subscribe: () => pubsub.asyncIterator(['UPDATED_PRODUCTION_COUNT'])
 	}
 	};

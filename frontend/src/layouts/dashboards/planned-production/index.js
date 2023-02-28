@@ -41,8 +41,6 @@ function PlannedProduction() {
     return store.alert;
 })
 
-// console.log(store);
-  
   return (
     <DashboardLayout>
       <MDBox width="calc(100% - 48px)" position="absolute" top="1.75rem">

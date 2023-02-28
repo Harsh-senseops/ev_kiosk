@@ -17,7 +17,6 @@ import IconButton from "@mui/material/IconButton";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import LinearProgress from "@mui/material/LinearProgress";
-import UpdateIcon from "@mui/icons-material/Update";
 
 const FIND_PRODUCTION_BY_SHIFT = `
 query FindProductionByShift($shift: String!) {
@@ -30,6 +29,8 @@ query FindProductionByShift($shift: String!) {
   }
 }
 `;
+
+
 
 function PlannedProductionTable() {
   const [columns, setColumns] = useState([
@@ -125,7 +126,6 @@ function PlannedProductionTable() {
         console.log("Omg it shouldnot have happned");
       }
       let toSortResultData = [...result.data.findProductionByShift];
-      console.log(toSortResultData);
       toSortResultData.sort((a, b) => {
         return a.Zone - b.Zone;
       });
@@ -140,12 +140,19 @@ function PlannedProductionTable() {
     } catch (err) {
       return err;
     }
+
+    if(store.executeQuery){
+      reExecuteQuery({ requestPolicy: 'network-only' });
+       setTimeout(()=>{
+      dispatch(action.setExecuteQuery(false))
+    },2000)
+    }
     setData(obj);
-    console.log("plannned table re-rendered");
   }
+
   React.useEffect(() => {
     checkTodaysData();
-  }, [result.data, store.shift, alertStore.loader]);
+  }, [result.data, store.shift, alertStore.showAlert,]);
 
   React.useEffect(() => {
     dispatch(action.setProductionCount(obj));

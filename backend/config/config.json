@@ -3,13 +3,13 @@
     "username": "sa",
     "password": "12345678",
     "database": "ev_kiosk",
-    "host": "127.0.0.1",
+    "host": "localhost",
     "dialect": "mssql",
     "port": 1433,  
     "logging": false,
     "dialectOptions":{
       "driver": "SQL Server Native Client 11.0",
-      "instanceName": "MSSQl",
+      "instanceName": "mssql",
       "trustedConnection": true,
       "options":{
         "trustedServerCertificate": true,

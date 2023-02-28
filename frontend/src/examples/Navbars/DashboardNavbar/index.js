@@ -150,7 +150,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
   function logout() {
     localStorage.setItem('isLoggedIn', "false");
-    navigate("/authentication/sign-in/basic")
+    navigate("/authentication/sign-in/basic");
   }
 
   return (

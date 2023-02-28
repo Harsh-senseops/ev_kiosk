@@ -40,7 +40,7 @@ type Mutation {
 
 type Subscription {
   newProductionCountAdded: ProductionCountDetails!
-  updaatedProductionCount: ProductionCountDetails!
+  updatedProductionCount: ProductionCountDetails!
 }
 
 scalar DateTime

@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     ZoneName: {
       type: DataTypes.STRING(20),
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,
