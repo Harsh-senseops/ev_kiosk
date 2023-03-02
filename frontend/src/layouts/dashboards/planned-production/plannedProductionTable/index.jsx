@@ -17,20 +17,7 @@ import IconButton from "@mui/material/IconButton";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import LinearProgress from "@mui/material/LinearProgress";
-
-const FIND_PRODUCTION_BY_SHIFT = `
-query FindProductionByShift($shift: String!) {
-  findProductionByShift(Shift: $shift) {
-    Date
-    Id
-    ProductionCount
-    Shift
-    Zone
-  }
-}
-`;
-
-
+import { FIND_PRODUCTION_BY_SHIFT } from "queries/allQueries";
 
 function PlannedProductionTable() {
   const [columns, setColumns] = useState([
@@ -173,7 +160,6 @@ function PlannedProductionTable() {
   return (
     <>
       {alertStore.loader ? <LinearProgress color="success" style={{ overflow: "hidden" }} /> : ""}
-
       <Grid mt={2}>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">

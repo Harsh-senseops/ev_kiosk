@@ -8,30 +8,14 @@ import Autocomplete from "@mui/material/Autocomplete";
 import FormField from "layouts/pages/account/components/FormField";
 import MDButton from "components/MDButton";
 import * as actionsTable from "../../../../reduxSlices/table";
-import * as alertAction from "../../../../reduxSlices/alert";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQuery } from "urql";
-const POST_MUTATION = `
-mutation Mutation($zone: Int, $shift: String, $productionCount: Int) {
-  createProductionCount(Zone: $zone, Shift: $shift, ProductionCount: $productionCount) {
-    ProductionCount
-    Shift
-    Zone
-  }
-}
-`;
-
-const UPDATE_MUTATION = `
-mutation Mutation($id: Int, $productionCount: Int) {
-  updateProductionCount(Id: $id, ProductionCount: $productionCount) {
-    Date
-    Id
-    ProductionCount
-    Shift
-    Zone
-  }
-}
-`;
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import TextField from '@mui/material/TextField';
+import alertAndLoaders from "util/alertAndLoaders";
+import {POST_MUTATION,UPDATE_MUTATION} from "queries/allQueries"
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -46,9 +30,7 @@ const FilterBasic = () => {
     return store.table;
   });
 
-  // const store2 = useSelector((store) => {
-  //   return store.alert;
-  // });
+  const [dateValueFrom, setDateValueFrom] = useState(new Date());
 
   const [createResult, createVals] = useMutation(POST_MUTATION);
   const [updateResult, upadateValue] = useMutation(UPDATE_MUTATION);
@@ -59,49 +41,37 @@ const FilterBasic = () => {
   const dispatch = useDispatch();
   
   const executeQuery = useCallback(() => {
-    store.fieldValues.map((val, index) => {
+    let counter = 0
+    store.fieldValues.map(async(val, index) => {
       if (!val.field) {
-        // if(index===3){
-        //   alert("Fields cannot be empty")
-        // }
+       counter++;
+        if(counter===4){
+          await alertAndLoaders("Feilds cannot be empty","warning",dispatch)
+        }
         return;
       } else if (val.dbId !== 0 && val.dbId !== "") {
         upadateValue({
           id: val.dbId,
           productionCount: Number(val.field),
-        });
-        dispatch(alertAction.setLoader(true));
-        setTimeout(() => {
-          dispatch(alertAction.setLoader(false));
-          dispatch(
-            alertAction.setAlertData({
-              message: "Updated SucessFully",
-              show: true,
-              color: "primary",
-            })
-          );
-        }, 2000);
-
-        setTimeout(() => {
-          dispatch(alertAction.setAlertData({ show: false }));
-        }, 4000);
+        }).then((result)=>{
+          if(result.error){
+             alertAndLoaders("Error 404 Not Found","error",dispatch)
+             return
+          }
+           alertAndLoaders("Updated SucessFully","primary",dispatch)
+        })
       } else {
         createVals({
           zone: val.id,
           shift: store.shift,
           productionCount: Number(val.field),
-        });
-        dispatch(alertAction.setLoader(true));
-        setTimeout(() => {
-          dispatch(alertAction.setLoader(false));
-          dispatch(
-            alertAction.setAlertData({ message: "Saved SucessFully", show: true, color: "success" })
-          );
-        }, 2000);
-
-        setTimeout(() => {
-          dispatch(alertAction.setAlertData({ show: false }));
-        }, 4000);
+        }).then((result)=>{
+          if(result.error){
+            alertAndLoaders("Error 404 Not Found","error",dispatch)
+            return
+          }
+          alertAndLoaders("Saved SucessFully","success",dispatch)
+        })
       }
     });
     dispatch(actionsTable.setExecuteQuery(true))
@@ -118,8 +88,8 @@ const FilterBasic = () => {
           p={1}
         >
 
-          {/* <Grid item xs={2}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Grid item xs={2}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                             views={['year', 'month', 'day']}
                             label="Date"
@@ -130,7 +100,7 @@ const FilterBasic = () => {
                             renderInput={(params) => <TextField {...params} helperText={null} />}
                             />
                         </LocalizationProvider>
-                    </Grid> */}
+                    </Grid>
           <Grid item xs={2}>
             <Autocomplete
               defaultValue="Shift 1"
@@ -144,7 +114,7 @@ const FilterBasic = () => {
               )}
             />
           </Grid>
-          <Grid item xs={1}>
+          <Grid item>
             <MDButton onClick={executeQuery} variant="gradient" color="info">
               Apply
             </MDButton>

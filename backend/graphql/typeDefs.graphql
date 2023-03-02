@@ -30,6 +30,8 @@ type Mutation {
     Zone: Int
     Shift: String
     ProductionCount: Int
+    Date: DateTime
+    Id: Int
   ): ProductionCountDetails!
 
   updateProductionCount(

@@ -80,6 +80,7 @@ import AnnualUploadHistory from "layouts/planner/upload-history/annual-upload-hi
 import MonthlyUploadHistory from "layouts/planner/upload-history/monthly-upload-history";
 import EVDashboard from "layouts/dashboards/ev-dashboard";
 import PlannedProduction from "layouts/dashboards/planned-production";
+import PhysicalPhenomena from "layouts/dashboards/physical-phenomena";
 
 // Material Dashboard 2 PRO React components
 import MDAvatar from "components/MDAvatar";
@@ -136,7 +137,12 @@ const routes = [
         key: "planned-production",
         route: "/dashboards/planned-production",
         component:  <ProtectedRoute Component = {PlannedProduction} />,
-      },
+      },{
+        name: "Physical Phenomena",
+        key: "physical-phenomena",
+        route: "/dashboards/physical-phenomena",
+        component: <ProtectedRoute Component = {PhysicalPhenomena}/>,
+      }
       // {
       //   name: "Main Dashboard",
       //   key: "main-dashboard",
