@@ -32,4 +32,18 @@ mutation Mutation($id: Int, $productionCount: Int) {
 }
 `;
 
-export {FIND_PRODUCTION_BY_SHIFT,POST_MUTATION,UPDATE_MUTATION}
+  const MACHINE_DATA = `
+  query Query {
+    getAllMachineData {
+      actionTaken
+      machine
+      physicalPhenomena {
+        phNo
+        pp
+      }
+      value
+    }
+  }
+  `
+
+export {FIND_PRODUCTION_BY_SHIFT,POST_MUTATION,UPDATE_MUTATION,MACHINE_DATA}

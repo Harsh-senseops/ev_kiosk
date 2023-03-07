@@ -88,11 +88,12 @@ const FilterBasic = () => {
           p={1}
         >
 
-          <Grid item xs={2}>
+          <Grid item xs={2.1}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                             views={['year', 'month', 'day']}
                             label="Date"
+                            readOnly
                             minDate={new Date('2012-03-01')}
                             maxDate={new Date('2023-06-01')}
                             value={dateValueFrom}

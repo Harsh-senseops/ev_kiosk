@@ -1,16 +1,17 @@
-const { ZoneNames,PlannedProductionCount,users } = require('../models');
+const { ZoneNames,PlannedProductionCount,users,Machine,MachineData,USERS } = require('../models');
 const { PubSub } = require('graphql-subscriptions');
+const initModels = require("../models/init-models");
 var sequelize = require('../models/index');
 const pubsub = new PubSub();
 const { QueryTypes } = require('sequelize');
 const { Op } = require("sequelize");
 // const models = initModels(sequelize);
+// console.log(initModels())
 const mssqlDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 const Query = {
 	getAllZonesDetails: async (parent, args, contextValue, info) => {
 		try {
 			const zoneNames = await ZoneNames.findAll();
-			console.log(args)
 			return zoneNames ;
 		}catch(err){
 			return err
@@ -52,7 +53,70 @@ const Query = {
 		}catch(err){
 			return err
 		}
+	},
+	getAllMachines: async(_,{
+	}) => {
+		try{
+			const machines = await Machine.findAll();
+				return machines
+		}catch(err){
+			return err
+		}
+
+	},
+	getAllMachineData: async(_,{
+	}) =>{
+		try{
+			let machineId = ""
+			let arr = []
+			let i = 0
+			const machineData = await sequelize.sequelize.query("select distinct * from dbo.Machine inner join dbo.MachineData on dbo.Machine.Id = dbo.MachineData.MachineId",{ type: QueryTypes.SELECT})
+			machineData.map((val)=>{
+				if(machineId === val.MachineId){
+					arr[i-1].physicalPhenomena.push({
+						pp:val.PhysicalPhenomena,
+						phNo:val.PhenomenonNo
+					})
+					arr[i-1].actionTaken.push(val.ActionTaken)
+				}else{
+					arr[i] = {
+						machine: val.Machines,
+						value:"",
+						physicalPhenomena:[],
+						actionTaken:[]
+					}
+					arr[i].physicalPhenomena.push({
+						pp:val.PhysicalPhenomena,
+						phNo:val.PhenomenonNo
+					})
+					arr[i].actionTaken.push(val.ActionTaken)
+					machineId = val.MachineId
+					i++
+					
+				}
+			})
+			
+			return arr
+		}catch(err){
+			console.log(err)
+			return err
+		}
+	},
+	getAllUsers : async(_,{
+		user_name
+	}) => {
+		try{
+			const users = await USERS.findOne({where:{user_name:user_name}});
+			if(users===null){
+				console.log("no user found")
+				return;
+			}
+			return users
+		}catch(err){
+			return err
+		}
 	}
+
 }
 
 const Mutation =  {

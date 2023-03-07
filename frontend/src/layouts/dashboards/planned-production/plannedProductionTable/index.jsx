@@ -38,10 +38,10 @@ function PlannedProductionTable() {
   const [show, setShow] = useState([false, false, false, false]);
 
   let [data, setData] = useState([
-    { zone: "Zone 1", field: "", id: 1, dbId: 0, isEdited: false },
-    { zone: "Zone 2", field: "", id: 2, dbId: 0, isEdited: false },
-    { zone: "Zone 3.1", field: "", id: 3, dbId: 0, isEdited: false },
-    { zone: "Zone 3.2", field: "", id: 4, dbId: 0, isEdited: false },
+    { zone: "Zone 1", field: "N/A", id: 1, dbId: 0, isEdited: false },
+    { zone: "Zone 2", field: "N/A", id: 2, dbId: 0, isEdited: false },
+    { zone: "Zone 3.1", field: "N/A", id: 3, dbId: 0, isEdited: false },
+    { zone: "Zone 3.2", field: "N/A", id: 4, dbId: 0, isEdited: false },
   ]);
   //For setting the input values if deleted this code, the input values will not get changed.
   const obj = [
@@ -103,10 +103,10 @@ function PlannedProductionTable() {
   //resposible for fetching todays production count based on shifts and setting to the table when shift is drop down is changed.
   async function checkTodaysData() {
     let obj = [
-      { zone: "Zone 1", field: "", id: 1, dbId: 0 },
-      { zone: "Zone 2", field: "", id: 2, dbId: 0 },
-      { zone: "Zone 3.1", field: "", id: 3, dbId: 0 },
-      { zone: "Zone 3.2", field: "", id: 4, dbId: 0 },
+      { zone: "Zone 1", field: "N/A", id: 1, dbId: 0 },
+      { zone: "Zone 2", field: "N/A", id: 2, dbId: 0 },
+      { zone: "Zone 3.1", field: "N/A", id: 3, dbId: 0 },
+      { zone: "Zone 3.2", field: "N/A", id: 4, dbId: 0 },
     ];
     try {
       if (result.data.findProductionByShift.length > 4) {
@@ -128,18 +128,18 @@ function PlannedProductionTable() {
       return err;
     }
 
-    if(store.executeQuery){
-      reExecuteQuery({ requestPolicy: 'network-only' });
-       setTimeout(()=>{
-      dispatch(action.setExecuteQuery(false))
-    },2000)
+    if (store.executeQuery) {
+      reExecuteQuery({ requestPolicy: "network-only" });
+      setTimeout(() => {
+        dispatch(action.setExecuteQuery(false));
+      }, 2000);
     }
     setData(obj);
   }
 
   React.useEffect(() => {
     checkTodaysData();
-  }, [result.data, store.shift, alertStore.showAlert,]);
+  }, [result.data, store.shift, alertStore.showAlert]);
 
   React.useEffect(() => {
     dispatch(action.setProductionCount(obj));
@@ -163,21 +163,24 @@ function PlannedProductionTable() {
       <Grid mt={2}>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableRow>
+            <TableRow style={{ background: "#3c3c43" }}>
               <TableCell>
-                <b>Zone</b>
+                <b style={{ color: "#ecf2ff" }}>Zone</b>
               </TableCell>
               <TableCell>
-                <b>Planned Production Count</b>
+                <b style={{ color: "#ecf2ff" }}>Planned Production Count</b>
               </TableCell>
               <TableCell align="right">
-                <b>Actions</b>
+                <b style={{ color: "#ecf2ff" }}>Actions</b>
               </TableCell>
             </TableRow>
 
             <TableBody>
               {data.map((row, i) => (
-                <TableRow key={row.zone} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                <TableRow
+                  key={row.zone}
+                  sx={{ "&:nth-of-type(odd)": { backgroundColor: "#ECF2FF" } }}
+                >
                   <TableCell component="th" scope="row">
                     {row.zone}
                   </TableCell>

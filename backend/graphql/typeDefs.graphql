@@ -1,15 +1,11 @@
 type Query {
   getAllZonesDetails: [Zones]
   getAllProductionDetails: [ProductionCountDetails]
-  getAllUsers: [Users]
+  getAllUsers(user_name:String!): Users
   getTodayProductionCount: [ProductionCountDetails]
   findProductionByShift(Shift:String!): [ProductionCountDetails]
-}
-
-type Users {
-  userId: Int
-  userName: String
-  userPassword: String
+  getAllMachines: [Machine]
+  getAllMachineData : [MachineData]
 }
 
 type ProductionCountDetails {
@@ -23,6 +19,28 @@ type ProductionCountDetails {
 type Zones {
   ZoneId: Int
   ZoneName: String
+}
+
+type Users {
+  user_name: String
+  user_password: String
+}
+
+type Machine {
+  Id: Int
+  Machines: String
+}
+
+type physicalPhenomena {
+  pp: String
+  phNo: Int
+}
+
+type MachineData {
+ machine: String
+ physicalPhenomena: [physicalPhenomena]
+ value: String
+ actionTaken: [String]
 }
 
 type Mutation {

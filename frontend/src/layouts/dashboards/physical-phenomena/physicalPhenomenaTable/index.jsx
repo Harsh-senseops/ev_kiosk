@@ -11,127 +11,85 @@ import MenuItem from "@mui/material/MenuItem";
 import "./pp.css";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-
-const TableData = [
-    //1
-  {
-    machine: "Cell Testing",
-    physicalPhenomena: [
-      { pp: "AC IR value High/Low", phNo: 1 },
-      { pp: "OCV value High/Low", phNo: 2 },
-      { pp: "Bar Code NG", phNo: 3 },
-      { pp: "Contact Error", phNo: 4 },
-    ],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-    //2
-  {
-    machine: "Cell Stacking & Dismantling",
-    physicalPhenomena: [
-      { pp: "Glue on Cell Welding Area", phNo: 5 },
-      { pp: "Cell Bonding Open and Bonding week", phNo: 6 },
-      { pp: "Glue on BMS Side", phNo: 7 },
-    ],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-    //3
-  {
-    machine: "Z-Fixation",
-    physicalPhenomena: [{ pp: "Caulking miss & Angel Hair", phNo: 8 }],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-    //4
-  {
-    machine: "Welding & Weld integrity",
-    physicalPhenomena: [
-      { pp: "Weld miss cell busbar", phNo: 9 },
-      { pp: "Weld Miss Main Busbar minus", phNo: 10 },
-      { pp: "High resistance weld Rework", phNo: 11 },
-      { pp: "Weld Miss Flex PCB", phNo: 12 },
-      { pp: "Weld Miss Main Busbar Plus", phNo: 13 },
-    ],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-    //5
-  {
-    machine: "Foaming",
-    physicalPhenomena: [
-      { pp: "Foam on Bms Side", phNo: 14 },
-      { pp: "Less Foam rework", phNo: 15 },
-    ],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-
-    //6
-  {
-    machine: "Thermal Pasting",
-    physicalPhenomena: [{ pp: "Curing time more/Thermal paste profile offset", phNo: 16 }],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-    //7
-  {
-    machine: "BMS Activation",
-    physicalPhenomena: [{ pp: "BMS Error LED light Glowing(BMS Replaced)", phNo: 17 }],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-    //8
-  {
-    machine: "Module Insertion",
-    physicalPhenomena: [{ pp: "Manual Application of Glue", phNo: 18 }],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-    //9
-  {
-    machine: "EOL",
-    physicalPhenomena: [{ pp: "BMS not showing data", phNo: 19 }],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-    //10
-  {
-    machine: "Leak Testing",
-    physicalPhenomena: [{ pp: "Rework With Loctite", phNo: 20 }],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-    //11
-  {
-    machine: "Dispatch",
-    physicalPhenomena: [
-      { pp: "Top/Bottom Lid Gap Rework with HB Fuller", phNo: 22 },
-      { pp: "Breather Fitment coming outside", phNo: 23 },
-      { pp: "Rubber Mat torn out", phNo: 24 },
-    ],
-    value: "",
-    actionTaken: ["Under Analysis"],
-  },
-];
+import { MACHINE_DATA } from "queries/allQueries";
+import { useQuery } from "urql";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import MDButton from "components/MDButton";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
 
 const style = {
-  color: "#e0040b",
+  color: "#ecf2ff",
 };
 
 function PhysicalPhenomenaTable() {
-  const [data, setData] = React.useState(TableData);
+  const [shouldPause, setShouldPause] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [data1, setData] = React.useState("");
+  const [index, setIndex] = React.useState(0);
+  const [machineDataResult, reExecMachineDataResult] = useQuery({
+    query: MACHINE_DATA,
+    pause: shouldPause,
+  });
+  const ref = React.useRef();
+  const [actionTakenValue, setActionTakenValue] = React.useState("");
+
+  const { data, fetching, error } = machineDataResult;
+
+  React.useEffect(() => {
+    if (data) {
+      setData(data.getAllMachineData);
+      setShouldPause(true);
+    }
+  }, [data]);
+
+  if (fetching) {
+    return <h1>Loading.....</h1>;
+  }
 
   const handleSelectValues = (i, e) => {
-    let obj = [...data];
+    let obj = [...data1];
     obj[i].value = e.target.value;
     setData(obj);
   };
+
+  const handleClickOpen = (i, add) => {
+    let obj = [...data1];
+    setIndex(i);
+    if (add === "add") {
+      obj[index].actionTaken.push(actionTakenValue);
+    }
+    console.log(obj[index].actionTaken);
+    console.log(index);
+    setOpen(!open);
+  };
+
+  const check = () => {
+    alert("Amigo");
+  };
+
   return (
     <Grid mt={2}>
+      <Grid
+        container
+        spacing={2}
+        direction="row"
+        alignItems="center"
+        justifyContent="flex-end"
+        p={1}
+      >
+        <MDButton variant="gradient" color="info">
+          Apply
+        </MDButton>
+      </Grid>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableRow style={{ background: "#191310" }}>
+          <TableRow style={{ background: "#3c3c43" }}>
             <TableCell>
               <b style={style}>Machine</b>
             </TableCell>
@@ -139,64 +97,138 @@ function PhysicalPhenomenaTable() {
               <b style={style}>Physical Phenomena</b>
             </TableCell>
             <TableCell>
-              <b style={style}>Phenomena No</b>
+              <b style={style}>Phenomenon No</b>
             </TableCell>
             <TableCell>
               <b style={style}>Action Taken</b>
             </TableCell>
-            <TableCell>
-              <b style={style}>Action Status</b>
-            </TableCell>
           </TableRow>
           <TableBody>
-            {data.map((row, i) => (
-              <TableRow
-                key={row.machine}
-                sx={{ "&:nth-of-type(odd)": { backgroundColor: "#ECF2FF" } }}
-              >
-                <TableCell background={{ background: "red" }} component="th" scope="row">
-                  {row.machine}
-                </TableCell>
-                <TableCell>
-                  <FormControl fullWidth>
-                    <InputLabel style={{ height: "35px" }} id="demo-simple-select-helper-label">
-                      Physical Phenomena
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-helper-label"
-                      id="demo-simple-select-helper"
-                      label="Physical Phenomena"
-                      style={{ height: "40px" }}
-                      value={row.value}
-                      onChange={(e) => handleSelectValues(i, e)}
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      {row.physicalPhenomena.map((val) => {
-                        return <MenuItem key={val.phNo} value={val.pp}>{val.pp}</MenuItem>;
-                      })}
-                    </Select>
-                  </FormControl>
-                </TableCell>
-                <TableCell style={{ textAlign: "center" }}>
-                  {!row.value
-                    ? 0
-                    : row.physicalPhenomena.map((val) => {
-                        if (val.pp === row.value) {
-                          return val.phNo;
-                        }
-                      })}
-                </TableCell>
-                <TableCell>Something</TableCell>
-                <TableCell>Something</TableCell>
-              </TableRow>
-            ))}
+            {data1
+              ? data1.map((row, i) => (
+                  <TableRow
+                    key={row.machine}
+                    sx={{ "&:nth-of-type(odd)": { backgroundColor: "#ECF2FF" } }}
+                  >
+                    <TableCell component="th" style={{ fontWeight: "400" }} scope="row">
+                      {row.machine}
+                    </TableCell>
+                    <TableCell>
+                      <FormControl fullWidth>
+                        <InputLabel style={{ height: "20px" }} id="demo-simple-select-helper-label">
+                          Physical Phenomena
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          id="demo-simple-select-helper"
+                          label="Physical Phenomena"
+                          style={{ height: "40px", fontWeight: "400" }}
+                          value={row.value}
+                          onChange={(e) => handleSelectValues(i, e)}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {row.physicalPhenomena.map((val) => {
+                            if (val.pp === "N/A") return;
+                            return (
+                              <MenuItem key={val.phNo} style={{ fontWeight: "400" }} value={val.pp}>
+                                <Tooltip title={val.pp}>
+                                  <div>
+                                    {" "}
+                                    {val.pp.length > 20 ? val.pp.slice(0, 20) + "..." : val.pp}
+                                  </div>
+                                </Tooltip>
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </TableCell>
+                    <TableCell size="small" style={{ textAlign: "center", fontWeight: "200" }}>
+                      {!row.value ? (
+                        <em>N/A</em>
+                      ) : (
+                        row.physicalPhenomena.map((val) => {
+                          if (val.pp === row.value) {
+                            return val.phNo;
+                          }
+                        })
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <FormControl fullWidth>
+                        <InputLabel style={{ height: "20px" }} id="demo-simple-select-helper-label">
+                          Action Taken
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          id="demo-simple-select-helper"
+                          label="Action Taken"
+                          style={{ height: "40px", fontWeight: "400" }}
+                          ref={ref}
+                          value=""
+                          onChange={check}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {row.actionTaken.map((val) => {
+                            if (val === "N/A") {
+                              return;
+                            }
+                            return (
+                              <MenuItem
+                                onClick={check}
+                                key={val}
+                                style={{ fontWeight: "400" }}
+                                value={val}
+                              >
+                                <Tooltip describeChild title={val}>
+                                  <div>{val.length > 20 ? val.slice(0, 20) + "..." : val}</div>
+                                </Tooltip>
+                              </MenuItem>
+                            );
+                          })}
+                          <MenuItem
+                            style={{ fontWeight: "400" }}
+                            value=""
+                            onClick={() => handleClickOpen(i, "dont add")}
+                          >
+                            {" "}
+                            Add Item
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </TableCell>
+                  </TableRow>
+                ))
+              : ""}
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog fullWidth="true" maxWidth="sm" open={open} onClose={handleClickOpen}>
+        <DialogTitle>Action Taken</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Add Action Taken</DialogContentText>
+          <TextField
+            onChange={(e) => setActionTakenValue(e.target.value)}
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Add Action Taken"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClickOpen}>Cancel</Button>
+          <Button onClick={() => handleClickOpen(index, "add")}>ADD</Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 }
 
-export default PhysicalPhenomenaTable;
+export default React.memo(PhysicalPhenomenaTable);
