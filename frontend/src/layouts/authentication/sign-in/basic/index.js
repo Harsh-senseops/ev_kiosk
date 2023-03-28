@@ -34,43 +34,92 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
-
+import { useQuery } from "urql";
+import { VALIDATE_USER } from "queries/allQueries";
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
-
+import { useSelector, useDispatch } from "react-redux";
+import * as action from "reduxSlices/userRoles";
 // Images
-import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [items, setItems] = useState(true);
   const navigate = useNavigate();
+  const [userResult, reExecUserRResult] = useQuery({
+    query: VALIDATE_USER,
+    variables: {userName},
+    pause:userName ? false : true
+  });
+  const { data, fetching, error } = userResult;
+  const dispatch = useDispatch();
+
+  const showError = () => {
+    if(error){
+      return (
+        <h1>error</h1>
+      )
+    }
+  }
 
   useEffect(() => {
-    localStorage.setItem('login', JSON.stringify(items));
-  }, [items]);
-
+    if (data) {
+      if (data.validateUser[0]) {
+        console.log(data.validateUser);
+        if (
+          data.validateUser[0].user_name === userName &&
+          data.validateUser[0].user_password === password
+        ) {
+          // alert("True");
+          let machinesIds = []
+          data.validateUser.map((val)=>{
+            machinesIds.push(val.user_machine_id)
+          })
+          navigate("/dashboards/analytics")
+          localStorage.setItem('isLoggedIn', JSON.stringify(items));
+          localStorage.setItem("machineID",JSON.stringify(machinesIds))
+          dispatch(action.setRoles(data.validateUser[0].user_roles_role))
+          dispatch(action.setMachines(machinesIds))
+          localStorage.setItem("userRole",JSON.stringify(data.validateUser[0].user_roles_role))
+        }else{
+          if(userName){
+            setErrorMsg("User credentials incorrect")
+          }
+        
+        }
+      }
+      else{
+        if(userName){
+          //if problem in server do whatever you want here
+          // setErrorMsg("User credentials incorrect")
+        }
+        
+      }
+    }
+  }, [userResult]);
+console.log(userResult)
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const handleEmail = (e) => {
-    console.log(e.target.value)
-  }
+    console.log(e.target.value);
+  };
 
   const handlePassword = (e) => {
-    console.log(e.target.value)
-  }
-
-  function login(){
-    localStorage.setItem('isLoggedIn', JSON.stringify(items));
-  }
+    console.log(e.target.value);
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    setItems(true)
-    navigate("/dashboards/analytics");
-  }
+    e.preventDefault();
+    setUserName(e.target.userName.value);
+    setPassword(e.target.password.value);
+    reExecUserRResult();
+    // localStorage.setItem('isLoggedIn', JSON.stringify(items));
+    // navigate("/dashboards/analytics");
+  };
+  localStorage.clear()
 
   return (
     <BasicLayout>
@@ -86,20 +135,22 @@ function Basic() {
           mb={1}
           textAlign="center"
         >
-          <MDTypography variant="h4" fontWeight="medium" color="white"mt={1}>
+          <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
             Login
           </MDTypography>
         </MDBox>
+        {showError()}
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form" onSubmit={e => handleSubmit(e)}>
+          <MDBox component="form" role="form" onSubmit={(e) => handleSubmit(e)}>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth onChange={e => handleEmail(e)}/>
+              <MDInput type="text" label="User name" fullWidth name="userName" />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth onChange={e => handlePassword(e)} />
+              <MDInput type="password" label="Password" name="password" fullWidth />
+              {errorMsg ? <span style={{fontSize:"13px",marginLeft:"10px",color:"red"}}>{errorMsg}</span>:""}
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton onClick = {login} variant="gradient" color="info" fullWidth type='submit'>
+              <MDButton variant="gradient" color="info" fullWidth type="submit">
                 Login
               </MDButton>
             </MDBox>

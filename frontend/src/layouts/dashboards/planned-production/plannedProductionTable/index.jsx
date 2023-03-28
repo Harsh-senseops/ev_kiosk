@@ -33,6 +33,10 @@ function PlannedProductionTable() {
     return store.alert;
   });
 
+  const userRoleStore = useSelector((store)=>{
+    return store.userRoles;
+  })
+
   const dispatch = useDispatch();
 
   const [show, setShow] = useState([false, false, false, false]);
@@ -96,11 +100,11 @@ function PlannedProductionTable() {
     newArray[index] = show[index] ? false : true;
     setShow(newArray);
     let obj1 = [...data];
-    obj1[index].field = "";
+    obj1[index].field = "N/A";
     setData(obj1);
   };
 
-  //resposible for fetching todays production count based on shifts and setting to the table when shift is drop down is changed.
+  //resposible for fetching todays production count based on shifts and setting to the table when shift dropdown is changed.
   async function checkTodaysData() {
     let obj = [
       { zone: "Zone 1", field: "N/A", id: 1, dbId: 0 },
@@ -133,13 +137,20 @@ function PlannedProductionTable() {
       setTimeout(() => {
         dispatch(action.setExecuteQuery(false));
       }, 2000);
+      // refresh()
+      // dispatch(action.setExecuteQuery(false));
     }
     setData(obj);
+    console.log("iRan")
   }
 
   React.useEffect(() => {
     checkTodaysData();
-  }, [result.data, store.shift, alertStore.showAlert]);
+  }, [result.data, store.executeQuery,store.shift]);
+
+  React.useEffect(()=>{
+    reExecuteQuery({ requestPolicy: "network-only" });
+  },[store.shift])
 
   React.useEffect(() => {
     dispatch(action.setProductionCount(obj));
@@ -170,7 +181,7 @@ function PlannedProductionTable() {
               <TableCell>
                 <b style={{ color: "#ecf2ff" }}>Planned Production Count</b>
               </TableCell>
-              <TableCell align="right">
+             <TableCell align="right">
                 <b style={{ color: "#ecf2ff" }}>Actions</b>
               </TableCell>
             </TableRow>
@@ -198,7 +209,7 @@ function PlannedProductionTable() {
                       row.field
                     )}
                   </TableCell>
-                  <TableCell component="th" scope="row" align="right">
+                 <TableCell component="th" scope="row" align="right">
                     {!show[i] ? (
                       <IconButton onClick={() => showInput(i)} aria-label="delete">
                         <CreateIcon />

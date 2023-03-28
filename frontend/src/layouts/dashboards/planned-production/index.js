@@ -32,19 +32,76 @@ import PlannedProductionTable from "./plannedProductionTable";
 import FilterBasic from "../ev-dashboard/FilterBasic";
 import MDAlert from "components/MDAlert";
 import { useSelector, useDispatch } from "react-redux";
+import { useMutation } from "urql";
+import { POST_MUTATION,UPDATE_MUTATION } from "queries/allQueries";
+import alertAndLoaders from "util/alertAndLoaders";
+import * as actionsTable from "../../../reduxSlices/table";
 
 function PlannedProduction() {
-  const store = useSelector((store)=>{
+  const [createResult, createVals] = useMutation(POST_MUTATION);
+  const [updateResult, upadateValue] = useMutation(UPDATE_MUTATION);
+
+  const dispatch = useDispatch();
+
+  const alertStore = useSelector((store)=>{
     return store.alert;
-})
+  })
+
+  const store = useSelector((store) => {
+  return store.table;
+  });
+
+ const executeQuery = () => {
+    let counter = 0
+    store.fieldValues.map(async(val, index) => {
+      if (val.field === "N/A" || !val.field) {
+       counter++;
+        if(counter===4){
+          await alertAndLoaders("Feilds cannot be empty","warning",dispatch)
+        }
+        return;
+      } else if (val.dbId !== 0 && val.dbId !== "") {
+        alertAndLoaders("SHOW_ALERT",dispatch);
+        upadateValue({
+          id: val.dbId,
+          productionCount: Number(val.field),
+        }).then((result)=>{
+          if(result.error){
+            console.log(result.error)
+            alertAndLoaders("UNSHOW_ALERT",dispatch,"Error 404 Not Found", "error");
+             return
+          }
+          alertAndLoaders("UNSHOW_ALERT",dispatch,"Updated SucessFully", "primary");
+        })
+        dispatch(actionsTable.setExecuteQuery(true))
+      } else {
+        alertAndLoaders("SHOW_ALERT",dispatch);
+        createVals({
+          zone: val.id,
+          shift: store.shift,
+          productionCount: Number(val.field),
+        }).then((result)=>{
+          if(result.error){
+            console.log(result.error)
+            alertAndLoaders("UNSHOW_ALERT",dispatch,"Error 404 Not Found", "error");
+            return
+          }
+          alertAndLoaders("UNSHOW_ALERT",dispatch,"Saved SucessFully", "success");
+        })
+        console.log("create")
+        dispatch(actionsTable.setExecuteQuery(true))
+      }
+    });
+    dispatch(actionsTable.setExecuteQuery(true))
+  };
 
   return (
     <DashboardLayout>
       <MDBox width="calc(100% - 48px)" position="absolute" top="1.75rem">
-      {store.showAlert ? 
+      {alertStore.showAlert ? 
         <div style={{zIndex:"2000",position:"fixed",width:"60%"}}>
-            <MDAlert color={store.color} dismissible={true}>
-              <h5>{store.message}</h5>
+            <MDAlert color={alertStore.color} dismissible={true}>
+              <h5>{alertStore.message}</h5>
             </MDAlert>
            </div>
             :""
@@ -54,12 +111,11 @@ function PlannedProduction() {
       <MDBox py={3} mt={7}>
       <Box sx={{ flexGrow: 1 }}>
             <Grid item xs={12} md={12} mb={1}>
-              <FilterBasic />
+              <FilterBasic showShift={true} onPress={executeQuery} />
             </Grid>
             <Grid item xs={12} md={12}>
                 <Card>
                   <CardContent>
-                    {/* <Header func1={pull_data1}/> */}
                     <PlannedProductionTable  />
                   </CardContent>
                 </Card>          

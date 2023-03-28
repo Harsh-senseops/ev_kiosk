@@ -91,13 +91,14 @@ import Icon from "@mui/material/Icon";
 
 // Images
 import profilePicture from "assets/images/team-3.jpg";
+import adminImg from "assets/images/admin.jpg"
 
 const routes = [
   {
     type: "collapse",
     name: "Admin",
     key: "brooklyn-alice",
-    icon: <MDAvatar src={profilePicture} alt="Brooklyn Alice" size="sm" />,
+    icon: <MDAvatar src={adminImg} alt="Brooklyn Alice" size="sm" />,
     collapse: [
       {
         name: "Profile",
@@ -137,11 +138,12 @@ const routes = [
         key: "planned-production",
         route: "/dashboards/planned-production",
         component:  <ProtectedRoute Component = {PlannedProduction} />,
-      },{
+      }
+      ,{
         name: "Physical Phenomena",
         key: "physical-phenomena",
         route: "/dashboards/physical-phenomena",
-        component: <ProtectedRoute Component = {PhysicalPhenomena}/>,
+        component: <ProtectedRoute Component = {PhysicalPhenomena} />,
       }
       // {
       //   name: "Main Dashboard",

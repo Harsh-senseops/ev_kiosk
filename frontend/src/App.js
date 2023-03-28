@@ -44,7 +44,9 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
 // Material Dashboard 2 PRO React routes
-import routes from "routes";
+import routes from "routes/routes";
+import productionRoutes from "routes/production-routes";
+import qualityRoutes from "routes/quality-routes";
 
 // Material Dashboard 2 PRO React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
@@ -55,17 +57,16 @@ import heroLogo from "assets/images/logos/logo192.png";
 // urql imports
 import { Client, Provider, defaultExchanges, subscriptionExchange, ssrExchange } from "urql";
 import { createClient as createWSClient } from 'graphql-ws';
-import { devtoolsExchange } from '@urql/devtools';
 import UserContext from "layouts/pages/userContext";
+import {useSelector} from "react-redux"
 
 // graphql url
 const senseopsHTTPServerURL = "http://localhost:4000/graphql";
-const senseopsWSServerURL = "ws://127.0.0.1:4000/graphql";
+const senseopsWSServerURL = "ws://localhost:4000/graphql";
 
 
-// const hmclHTTPServerURL = "http://10.79.3.37:5001/graphql";
-// const hmclWSServerURL = "ws://10.79.3.37:5001/graphql";
-
+// const hmclHTTPServerURL = "http://10.79.3.37:4000/graphql";
+// const hmclWSServerURL = "ws://10.79.3.37:4000/graphql";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -81,7 +82,11 @@ export default function App() {
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
+  const [ro,setRo] = useState("hola")
   const { pathname } = useLocation();
+  const userRoles = useSelector((store)=>{
+    return store.userRoles
+  })
 
   // Cache for the rtl
   useMemo(() => {
@@ -123,7 +128,8 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
-  const getRoutes = (allRoutes) =>
+
+const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
       if (route.collapse) {
         return getRoutes(route.collapse);
@@ -135,6 +141,29 @@ export default function App() {
 
       return null;
     });
+  function authorizeUser() {
+      let user = userRoles.roles
+      if(user === 1){
+        return {
+          fun:getRoutes(routes),
+          route:routes,
+          location:"/dashboards/planned-production"
+        }
+      }
+      else if(user === 2){
+        return {
+          fun:getRoutes(qualityRoutes),
+          route:qualityRoutes,
+          location:"/dashboards/physical-phenomena"
+        }
+      }else{
+        return {
+          fun:getRoutes(productionRoutes),
+          route:productionRoutes,
+          location:"/dashboards/planned-production"
+        }
+      }
+    }
 
     const wsClient = createWSClient({
       url: senseopsWSServerURL,
@@ -200,8 +229,8 @@ export default function App() {
         )}
         {layout === "vr" && <Configurator />}
         <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboards/analytics" />} />
+        {getRoutes(routes)}
+          <Route path="*" element={<Navigate to="/dashboards/physical-phenomena" />} />
         </Routes>
       </ThemeProvider>
     </CacheProvider>
@@ -218,7 +247,7 @@ export default function App() {
             color={sidenavColor}
             // brand={(transparentSidenav && !darkMode) || whiteSidenav ? "EV" : "EV"}
             brandName="ELECTRIC VEHICLE"
-            routes={routes}
+            routes={authorizeUser().route}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
@@ -228,8 +257,9 @@ export default function App() {
       )}
       {layout === "vr" && <Configurator />}
       <Routes>
-        {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboards/planned-production" />} />
+      {/* {getRoutes(qualityRoutes)} */}
+      {authorizeUser().fun}
+        <Route path="*" element={<Navigate to={authorizeUser().location} />} />
       </Routes>
     </ThemeProvider>
     </UserContext.Provider>

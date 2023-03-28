@@ -1,46 +1,100 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Box from '@mui/material/Box';
-
-
-// Material Dashboard 2 PRO React components
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Box from "@mui/material/Box";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import PhysicalPhenomenaTable from "./physicalPhenomenaTable";
+import { useSelector } from "react-redux";
+import MDAlert from "components/MDAlert";
+import { LinearProgress } from "@mui/material";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+import "./pp.css";
+import RejectionRework from "../rejection-rework";
 
-function PhysicalPhenomena(){
+function PhysicalPhenomena() {
+  const alertStore = useSelector((store) => {
+    return store.alert;
+  });
 
-    return(
-        <DashboardLayout>
+  const [value, setValue] = React.useState("1");
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  return (
+    <DashboardLayout>
       <MDBox width="calc(100% - 48px)" position="absolute" top="1.75rem">
-      {/* {store.showAlert ? 
-        <div style={{zIndex:"2000",position:"fixed",width:"60%"}}>
-            <MDAlert color={store.color} dismissible={true}>
-              <h5>{store.message}</h5>
+        {alertStore.showAlert ? (
+          <div style={{ zIndex: "2000", position: "fixed", width: "60%" }}>
+            <MDAlert color={alertStore.color} dismissible={true}>
+              <h5>{alertStore.message}</h5>
             </MDAlert>
-           </div>
-            :""
-       } */}
+          </div>
+        ) : (
+          ""
+        )}
         <DashboardNavbar absolute />
       </MDBox>
+
       <MDBox py={3} mt={7}>
+        <Box sx={{ width: "100%", typography: "body1", flexGrow: 1 }}>
+          <TabContext value={value}>
+            <Grid item xs={12} md={12}>
+              <Card>
+              <CardContent style={{padding:"10px"}}>
+                <TabList onChange={handleChange} aria-label="lab API tabs example">
+                  <Tab label="Physical Phenomena" value="1" />
+                  <Tab label="Rejection Work" value="2" />
+                </TabList>
+                </CardContent>
+                </Card>
+            </Grid>
+            <TabPanel value="1">
+              {alertStore.loader ? (
+                <LinearProgress color="success" style={{ overflow: "hidden" }} />
+              ) : (
+                ""
+              )}
+              <Box sx={{ flexGrow: 1 }}>
+                <Grid item xs={12} md={12}>
+                  <Card>
+                    <CardContent>
+                      <PhysicalPhenomenaTable />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Box>
+            </TabPanel>
+            <TabPanel value="2">
+              <RejectionRework/>
+            </TabPanel>
+          </TabContext>
+        </Box>
+      </MDBox>
+
+      {/* <MDBox py={3} mt={7}>
+      {alertStore.loader ? <LinearProgress color="success" style={{ overflow: "hidden" }} /> : ""}
       <Box sx={{ flexGrow: 1 }}>
             <Grid item xs={12} md={12}>
                 <Card>
                   <CardContent>
-                    <PhysicalPhenomenaTable/>
+                    <PhysicalPhenomenaTable  />
                   </CardContent>
                 </Card>          
             </Grid>
           </Box>
-      </MDBox>
+      </MDBox> */}
       <Footer />
     </DashboardLayout>
-    )
+  );
 }
 
-export default PhysicalPhenomena;
+export default React.memo(PhysicalPhenomena);
