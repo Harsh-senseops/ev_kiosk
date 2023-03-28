@@ -32,7 +32,7 @@
     "logging": false,
     "dialectOptions":{
       "driver": "SQL Server Native Client 11.0",
-      "instanceName": "WASIM",
+      "instanceName": "HE6CDEVSQL01P",
       "trustedConnection": true,
       "options":{
         "trustedServerCertificate": true,

@@ -1,9 +1,8 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('USERS', {
-    user_Id: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
+  return sequelize.define('users', {
+    user_id: {
+      type: DataTypes.STRING(20),
       allowNull: false,
       primaryKey: true
     },
@@ -15,26 +14,18 @@ module.exports = function(sequelize, DataTypes) {
     user_password: {
       type: DataTypes.STRING(20),
       allowNull: false
-    },
-    user_role: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'ROLES',
-        key: 'role_id'
-      }
     }
   }, {
     sequelize,
-    tableName: 'USERS',
+    tableName: 'users',
     schema: 'dbo',
     timestamps: false,
     indexes: [
       {
-        name: "PK_USERS",
+        name: "PK_users",
         unique: true,
         fields: [
-          { name: "user_Id" },
+          { name: "user_id" },
         ]
       },
       {

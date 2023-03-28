@@ -1,11 +1,17 @@
 type Query {
   getAllZonesDetails: [Zones]
   getAllProductionDetails: [ProductionCountDetails]
-  getAllUsers(user_name:String!): Users
+  validateUser(userName:String!): [Users]
   getTodayProductionCount: [ProductionCountDetails]
   findProductionByShift(Shift:String!): [ProductionCountDetails]
   getAllMachines: [Machine]
   getAllMachineData : [MachineData]
+  getAllActionTaken : [ActionTaken]
+  getPhysicalPhenomenaLength : PhysicalPhenomenaLength
+  getRPhysicalPhenomenaLength : RPhysicalPhenomenaLength
+  getTodaysPhysicalPhenomena: [PPRecords]
+  getPhysicalPhenomenaBasedOnDate(date:String!): [PPRecords]
+  getAllRejectionWorkMachineData: [MachineData]
 }
 
 type ProductionCountDetails {
@@ -22,8 +28,21 @@ type Zones {
 }
 
 type Users {
+  user_id: String
   user_name: String
   user_password: String
+  user_roles_role: Int
+  user_machine_id: Int
+}
+
+type UserRoles {
+  user_roles_role: Int
+  user_machine_id: Int
+}
+
+type ComboUserUserRoles {
+userInfo : Users
+userRolesInfo : UserRoles
 }
 
 type Machine {
@@ -32,15 +51,86 @@ type Machine {
 }
 
 type physicalPhenomena {
-  pp: String
-  phNo: Int
+  phenomena_no: Int
+  phenomena_name: String
+  action_taken:[String]
+}
+
+type physicalPhenomenaTable {
+  p_machine_id: Int
+  phenomena_no: Int
+  phenomena_name: String
+}
+
+type rPhysicalPhenomenaTable {
+  rp_machine_id: Int
+  r_phenomena_no: Int
+  r_phenomena_name: String
+}
+
+type rAddRActionTaken {
+  r_action_taken_id: Int
+  rp_action_taken_id: Int
+  r_action_taken: String
+}
+
+type value{
+name: String,
+id:Int
+}
+
+type ActionTaken {
+  action_taken_id: Int
+  p_action_taken_id: Int
+  action_taken: String
+}
+
+type RActionTaken {
+  r_action_taken_id: Int
+  rp_action_taken_id: Int
+  r_action_taken: String
 }
 
 type MachineData {
- machine: String
- physicalPhenomena: [physicalPhenomena]
- value: String
- actionTaken: [String]
+ machine_id: Int
+ machine_name: String
+ value: String  
+ action_taken_value: String
+ battery_pack_id: String
+ physicalPhenomena:[physicalPhenomena]
+}
+
+type PhysicalPhenomenaLength {
+  length: Int
+}
+
+type RPhysicalPhenomenaLength {
+  length: Int
+}
+
+type PPRecords {
+  ppr_Id: Int
+  date: DateTime
+  machine: String
+  p_phenomena: String
+  phenomena_no: Int
+  action_taken: String
+  battery_pack_id: String
+}
+
+type RPPRecords {
+  r_ppr_Id: Int
+  r_date: DateTime
+  r_machine: String
+  r_p_phenomena: String
+  r_phenomena_no: Int
+  r_action_taken: String
+  r_battery_pack_id : String
+}
+
+type R_MACHINE_DATA{
+  r_machine_id: Int
+  r_machine_name: String
 }
 
 type Mutation {
@@ -56,6 +146,51 @@ type Mutation {
   Id: Int
   ProductionCount: Int
   ): ProductionCountDetails!
+
+  addPhysicalPhenomena(
+  p_machine_id: Int
+  phenomena_no: Int
+  phenomena_name: String
+  ):physicalPhenomenaTable
+
+  addRPhysicalPhenomena(
+  rp_machine_id: Int
+  r_phenomena_no: Int
+  r_phenomena_name: String
+  ):rPhysicalPhenomenaTable
+
+  addActionTaken(
+  p_action_taken_id: Int
+  action_taken: String
+  ):ActionTaken
+
+  addRActionTaken(
+  rp_action_taken_id: Int
+  r_action_taken: String
+  ):RActionTaken
+
+  addPhysicalPhenomenaRecords(
+  machine: String
+	p_phenomena: String
+	phenomena_no: Int
+	action_taken: String
+  battery_pack_id: String
+  ):PPRecords
+
+  addRejectionppRecords(
+  r_machine: String
+	r_p_phenomena: String
+	r_phenomena_no: Int
+	r_action_taken: String
+  r_battery_pack_id: String
+  ):RPPRecords
+
+  addUser(
+  user_name: String
+  user_password: String
+  user_roles_role: Int
+  user_machine_id: Int
+  ):Users
 }
 
 type Subscription {
@@ -64,3 +199,4 @@ type Subscription {
 }
 
 scalar DateTime
+

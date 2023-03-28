@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('ROLES', {
+  return sequelize.define('roles', {
     role_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'ROLES',
+    tableName: 'roles',
     schema: 'dbo',
     timestamps: false,
     indexes: [
