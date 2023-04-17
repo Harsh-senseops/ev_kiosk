@@ -55,10 +55,10 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 import heroLogo from "assets/images/logos/logo192.png";
 
 // urql imports
-import { Client, Provider, defaultExchanges, subscriptionExchange, ssrExchange } from "urql";
+import { Client, Provider, defaultExchanges, subscriptionExchange,cacheExchange } from "urql";
 import { createClient as createWSClient } from 'graphql-ws';
 import UserContext from "layouts/pages/userContext";
-import {useSelector} from "react-redux"
+import {useSelector} from "react-redux";
 
 // graphql url
 const senseopsHTTPServerURL = "http://localhost:4000/graphql";
@@ -128,6 +128,26 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
+  useEffect(() => {
+    const handleTabClose = event => {
+      event.preventDefault();
+      const performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {};
+      const navigationTiming = performance.getEntriesByType('navigation')[0] || {};
+      if (navigationTiming.type === 'reload') {
+        // If the navigation was a reload, allow the default behavior
+        return;
+      }
+      
+      localStorage.clear();
+    };
+
+    window.addEventListener('beforeunload', handleTabClose);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleTabClose);
+    };
+  }, []);
+
 
 const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
@@ -168,10 +188,38 @@ const getRoutes = (allRoutes) =>
     const wsClient = createWSClient({
       url: senseopsWSServerURL,
     });
-  
+
+    async function initializeAuthState() {
+      const token = localStorage.getItem("TOKEN_KEY");
+      // const refreshToken = await AyncStorage.getItem(REFRESH_KEY);
+      return token;
+    }
+
+    // makeOperation(operation.kind, operation, {
+    //   ...operation.context,
+    //   someAuthThing: token,
+    // });
+
+    // { 
+    //   makeOperation: (operation, forward) => {
+    //     // modify the headers here
+    //     operation.context.headers = {
+    //       ...operation.context.headers,
+    //       Authorization: initializeAuthState()
+    //     };
+    //     return forward(operation);
+    //   }
+    // }
     const client = new Client({
       url: senseopsHTTPServerURL,
+      fetchOptions: () => {
+        const token = localStorage.getItem("TOKEN_KEY");
+        return {
+          headers: { authorization: token ? token : '' },
+        };
+      },
       exchanges: [
+        cacheExchange,
         ...defaultExchanges,
         subscriptionExchange({
           forwardSubscription: (operation) => ({

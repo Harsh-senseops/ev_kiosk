@@ -114,11 +114,11 @@ function PlannedProduction() {
               <FilterBasic showShift={true} onPress={executeQuery} />
             </Grid>
             <Grid item xs={12} md={12}>
-                <Card>
-                  <CardContent>
+                {/* <Card>
+                  <CardContent> */}
                     <PlannedProductionTable  />
-                  </CardContent>
-                </Card>          
+                  {/* </CardContent>
+                </Card>           */}
             </Grid>
           </Box>
       </MDBox>

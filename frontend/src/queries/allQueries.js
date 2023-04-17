@@ -32,7 +32,7 @@ mutation Mutation($id: Int, $productionCount: Int) {
 }
 `;
 
-  const MACHINE_DATA = `
+const MACHINE_DATA = `
   query GetAllMachineData {
     getAllMachineData {
       machine_id
@@ -48,7 +48,7 @@ mutation Mutation($id: Int, $productionCount: Int) {
     }
   }
   `
-  const ADD_ACTION_TABLE = `
+const ADD_ACTION_TABLE = `
   mutation Mutation($pActionTakenId: Int, $actionTaken: String) {
     addActionTaken(p_action_taken_id: $pActionTakenId, action_taken: $actionTaken) {
       action_taken_id
@@ -57,18 +57,16 @@ mutation Mutation($id: Int, $productionCount: Int) {
     }
   }
   `
-  const VALIDATE_USER = `
-  query ValidateUser($userName: String!) {
-    validateUser(userName: $userName) {
-      user_id
-      user_name
-      user_password
-      user_roles_role
-      user_machine_id
-    }
+const VALIDATE_USER = `
+query Query($userName: String!, $userPassword: String!) {
+  validateUser(user_name: $userName, user_password: $userPassword) {
+    userId
+    token
+    tokenExpiration
   }
-  `
-  const P_PHENOMENA_LENGTH = `
+}
+`
+const P_PHENOMENA_LENGTH = `
   query Query {
     getPhysicalPhenomenaLength {
       length
@@ -181,4 +179,25 @@ mutation AddRActionTaken($rpActionTakenId: Int, $rActionTaken: String) {
 }
 `
 
-export {FIND_PRODUCTION_BY_SHIFT,POST_MUTATION,UPDATE_MUTATION,MACHINE_DATA,ADD_ACTION_TABLE,VALIDATE_USER,P_PHENOMENA_LENGTH,ADD_PHYSICAL_PHENOMEA_TABLE,ADD_MACHINE_RECORDS,TODAYS_PP_RECORDS,PPR_BY_DATE,R_MACHINE_DATA,ADD_R_P_PHENOMENA_RECORDS,RP_PHENOMENA_LENGTH,ADD_R_PHYSICAL_PHENOMENA,ADD_R_ACTION_TAKEN }
+const ADD_COST_OF_LOSS_DATA = `
+mutation Mutation($cMachineName: String, $lossData: Int, $cShift: String) {
+  addCostOfLossData(c_machine_name: $cMachineName, loss_data: $lossData, c_shift: $cShift) {
+    c_id
+    c_machine_name
+    loss_data
+    c_shift
+  }
+}
+`
+
+const ADD_GLUE_LOSS_DATA = `
+mutation AddGlueLossData($gMachineName: String, $glueLoss: Int, $gShift: String) {
+  addGlueLossData(g_machine_name: $gMachineName, glue_loss: $glueLoss, g_shift: $gShift) {
+    m_id
+    g_machine_name
+    glue_loss
+    g_shift
+  }
+}
+`
+export { FIND_PRODUCTION_BY_SHIFT, POST_MUTATION, UPDATE_MUTATION, MACHINE_DATA, ADD_ACTION_TABLE, VALIDATE_USER, P_PHENOMENA_LENGTH, ADD_PHYSICAL_PHENOMEA_TABLE, ADD_MACHINE_RECORDS, TODAYS_PP_RECORDS, PPR_BY_DATE, R_MACHINE_DATA, ADD_R_P_PHENOMENA_RECORDS, RP_PHENOMENA_LENGTH, ADD_R_PHYSICAL_PHENOMENA, ADD_R_ACTION_TAKEN, ADD_COST_OF_LOSS_DATA, ADD_GLUE_LOSS_DATA }

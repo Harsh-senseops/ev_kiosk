@@ -10,14 +10,20 @@ const {
   rejection_p_phenomena_records,
   r_physical_phenomena,
   r_action_taken_schema,
+  glue_loss_weight,
+  cost_of_loss_data,
 } = require("../models");
+const fetch = require("node-fetch");
 const { PubSub } = require("graphql-subscriptions");
+const jwt = require("jsonwebtoken");
 var sequelize = require("../models/index");
 const pubsub = new PubSub();
 const { QueryTypes } = require("sequelize");
 
 const Query = {
+  
   getAllZonesDetails: async (parent, args, contextValue, info) => {
+    console.log(contextValue.isAuth);
     try {
       const zoneNames = await ZoneNames.findAll();
       return zoneNames;
@@ -124,18 +130,17 @@ const Query = {
       return err;
     }
   },
-  validateUser: async (_, { userName }) => {
-    try {
-      const users = await sequelize.sequelize.query(
-        `select * from users inner join user_roles on users.user_id = user_roles.user_id where users.user_name = '${userName}'`,
-        { type: QueryTypes.SELECT }
-      );
-      return users;
-    } catch (err) {
-      console.log(err);
-      return err;
-    }
-  },
+  // validateUser: async (_, { userName }) => {
+  //   try {
+  //     const users = await sequelize.sequelize.query(
+  //       `select * from users inner join user_roles on users.user_id = user_roles.user_id where users.user_name = '${userName}'`,
+  //       { type: QueryTypes.SELECT }
+  //     );
+  //     return users;
+  //   } catch (err) {
+  //     return err;
+  //   }
+  // },
   getAllActionTaken: async (_, {}) => {
     try {
       const allActionTaken = await action_taken_schema.findAll();
@@ -186,7 +191,8 @@ const Query = {
       return err;
     }
   },
-  getAllRejectionWorkMachineData: async (_, {}) => {
+  getAllRejectionWorkMachineData: async (parent, args, contextValue, info) => {
+    console.log(contextValue.isAuth)
     try {
       let tempID = 0;
       let arr = [];
@@ -246,10 +252,55 @@ const Query = {
       return err;
     }
   },
+  validateUser: async (parent, { user_name, user_password }, contextValue, info) => {
+    let userObj = { machineId: [] };
+    const user = await sequelize.sequelize.query(
+      `select * from users inner join user_roles on users.user_id = user_roles.user_id where users.user_name = '${user_name}' and user_password = '${user_password}'`,
+      { type: QueryTypes.SELECT }
+    );
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    user.map((val) => {
+      userObj.id = val.user_id;
+      userObj.name = val.user_name;
+      userObj.password = val.user_password;
+      userObj.role = val.user_roles_role;
+      userObj.machineId.push(val.user_machine_id);
+    });
+    const token = jwt.sign(
+      {
+        userId: userObj.id,
+        userName: userObj.name,
+        userRole: userObj.role,
+        machineId: userObj.machineId,
+      },
+      'H11Z%h<<M8}h.4<',
+      { expiresIn: "1h" }
+    );
+    fetch('http://localhost:4000/graphql', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': token
+  },
+  body: JSON.stringify({ query: '{ hello }' }),
+})
+.then(res => res.json())
+.then(res => "");
+    return { userId: userObj.id, token, tokenExpiration: 1 };
+  },
 };
 
 const Mutation = {
-  createProductionCount: async (_, { Date, Zone, Shift, ProductionCount }) => {
+  createProductionCount: async (
+    parent,
+    { Date, Zone, Shift, ProductionCount },
+    contextValue,
+    info
+  ) => {
+    // console.log(info)
     try {
       var current =
         (await PlannedProductionCount) &&
@@ -394,7 +445,6 @@ const Mutation = {
       return err;
     }
   },
-
   addUser: async (
     _,
     { user_name, user_password, user_roles_role, user_machine_id }
@@ -421,6 +471,36 @@ const Mutation = {
       return adduser;
     } catch (err) {
       console.log(err);
+      return err;
+    }
+  },
+  addGlueLossData: async (_, { g_machine_name, glue_loss, g_shift }) => {
+    try {
+      // glue_loss + 0.1
+      const glueData =
+        (await glue_loss_weight) &&
+        glue_loss_weight.create({
+          g_machine_name,
+          glue_loss,
+          g_shift,
+        });
+      // console.log(await glueData)
+      return glueData;
+    } catch (err) {
+      return err;
+    }
+  },
+  addCostOfLossData: async (_, { c_machine_name, loss_data, c_shift }) => {
+    try {
+      const costOfLossData =
+        (await cost_of_loss_data) &&
+        cost_of_loss_data.create({
+          c_machine_name,
+          loss_data,
+          c_shift,
+        });
+      return costOfLossData;
+    } catch (err) {
       return err;
     }
   },

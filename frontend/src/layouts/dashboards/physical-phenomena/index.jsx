@@ -44,54 +44,33 @@ function PhysicalPhenomena() {
         <DashboardNavbar absolute />
       </MDBox>
 
-      <MDBox py={3} mt={7}>
-        <Box sx={{ width: "100%", typography: "body1", flexGrow: 1 }}>
-          <TabContext value={value}>
-            <Grid item xs={12} md={12}>
+      <MDBox py={3} mt={8}>
+        <Box style={{marginBottom:"10px"}} sx={{ width: "100%", typography: "body1", flexGrow: 1 }}>
+          <TabContext value={value} style={{marginBottom:"10px"}}>
+            <Grid item xs={12} md={12} mb={0}>
               <Card>
-              <CardContent style={{padding:"10px"}}>
-                <TabList onChange={handleChange} aria-label="lab API tabs example">
-                  <Tab label="Physical Phenomena" value="1" />
-                  <Tab label="Rejection Work" value="2" />
-                </TabList>
+                <CardContent style={{ padding: "10px" }}>
+                  <TabList onChange={handleChange} aria-label="lab API tabs example">
+                    <Tab label="Physical Phenomena" value="1" />
+                    <Tab label="Rejection Work" value="2" />
+                  </TabList>
                 </CardContent>
-                </Card>
+              </Card>
             </Grid>
             <TabPanel value="1">
-              {alertStore.loader ? (
-                <LinearProgress color="success" style={{ overflow: "hidden" }} />
-              ) : (
-                ""
-              )}
+              {alertStore.loader ? <LinearProgress color="success" style={{overflow:"hidden"}} /> : ""}
               <Box sx={{ flexGrow: 1 }}>
                 <Grid item xs={12} md={12}>
-                  <Card>
-                    <CardContent>
-                      <PhysicalPhenomenaTable />
-                    </CardContent>
-                  </Card>
+                  <PhysicalPhenomenaTable />
                 </Grid>
               </Box>
             </TabPanel>
             <TabPanel value="2">
-              <RejectionRework/>
+              <RejectionRework />
             </TabPanel>
           </TabContext>
         </Box>
       </MDBox>
-
-      {/* <MDBox py={3} mt={7}>
-      {alertStore.loader ? <LinearProgress color="success" style={{ overflow: "hidden" }} /> : ""}
-      <Box sx={{ flexGrow: 1 }}>
-            <Grid item xs={12} md={12}>
-                <Card>
-                  <CardContent>
-                    <PhysicalPhenomenaTable  />
-                  </CardContent>
-                </Card>          
-            </Grid>
-          </Box>
-      </MDBox> */}
       <Footer />
     </DashboardLayout>
   );

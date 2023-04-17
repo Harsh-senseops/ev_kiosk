@@ -1,8 +1,10 @@
 async function serve (){
+  
+  const isAuth = require("./middleware/is-auth")
   const fs = require('fs');
   const gql =  require('graphql-tag')
   const cors = require('cors');
-  const resolvers = require('./graphql/resolvers');
+  const resolvers = require('./graphql/resolvers.js');
 const typeDefs = gql(fs.readFileSync('./graphql/typeDefs.graphql',{encoding:'utf-8'}));
   const  { createServer } = require('http');
   const { ApolloServerPluginDrainHttpServer } = require('@apollo/server/plugin/drainHttpServer');
@@ -15,7 +17,8 @@ const typeDefs = gql(fs.readFileSync('./graphql/typeDefs.graphql',{encoding:'utf
   const { ApolloServer } = require('@apollo/server')
   const httpServer = createServer(app);
   const { expressMiddleware } = require('@apollo/server/express4');
-  
+  // const fetch = require('node-fetch');
+
   // Create the schema, which will be used separately by ApolloServer and
   // the WebSocket server.
   const schema = makeExecutableSchema({ typeDefs, resolvers });
@@ -52,7 +55,8 @@ const typeDefs = gql(fs.readFileSync('./graphql/typeDefs.graphql',{encoding:'utf
   });
   
   await server.start();
-  app.use('/graphql', cors(), bodyParser.json(), expressMiddleware(server));
+
+  app.use('/graphql',cors(), bodyParser.json(), isAuth,expressMiddleware(server,{context:(req)=>req.req}));
   
   const PORT = 4000;
   // Now that our HTTP server is fully set up, we can listen to it.
@@ -62,4 +66,4 @@ const typeDefs = gql(fs.readFileSync('./graphql/typeDefs.graphql',{encoding:'utf
   
   }
   
-  serve()
+  serve();

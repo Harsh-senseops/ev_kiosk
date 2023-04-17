@@ -35,6 +35,7 @@ import MDTypography from "components/MDTypography";
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
 import SidenavList from "examples/Sidenav/SidenavList";
 import SidenavItem from "examples/Sidenav/SidenavItem";
+import React from "react";
 
 // Custom styles for the Sidenav
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
@@ -48,7 +49,20 @@ import {
   setWhiteSidenav,
 } from "context";
 
-function Sidenav({ color, brand, brandName, routes, ...rest }) {
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+function Sidenav({ color,brand, brandName, routes, ...rest }) {
   const [openCollapse, setOpenCollapse] = useState(false);
   const [openNestedCollapse, setOpenNestedCollapse] = useState(false);
   const [controller, dispatch] = useMaterialUIController();
@@ -59,6 +73,16 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const items = pathname.split("/").slice(1);
   const itemParentName = items[1];
   const itemName = items[items.length - 1];
+  const [open, setOpen] = React.useState(false);
+  const navigte = useNavigate();
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   let textColor = "white";
 
@@ -67,6 +91,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   } else if (whiteSidenav && darkMode) {
     textColor = "inherit";
   }
+
+  console.log(routes);
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
@@ -117,9 +143,14 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
     return template;
   };
+
+  const logout = () => {
+    localStorage.clear();
+    navigte("/authentication/sign-in/basic");
+  };
   // Render the all the collpases from the routes.js
   const renderCollapse = (collapses) =>
-    collapses.map(({ name, collapse, route, href, key }) => {
+    collapses.map(({ name, icon, collapse, route, href, key }) => {
       let returnValue;
 
       if (collapse) {
@@ -148,11 +179,15 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             rel="noreferrer"
             sx={{ textDecoration: "none" }}
           >
-            <SidenavItem color={color} name={name} active={key === itemName} />
+            <SidenavItem color={color} icon={icon} name={name} active={key === itemName} />
           </Link>
+        ) : route === "/authentication/sign-in/basic" ? (
+          <div onClick={handleClickOpen}>
+            <SidenavItem color={color} icon={icon} name={name} active={key === itemName} />
+          </div>
         ) : (
           <NavLink to={route} key={key} sx={{ textDecoration: "none" }}>
-            <SidenavItem color={color} name={name} active={key === itemName} />
+            <SidenavItem color={color} icon={icon}  name={name} active={key === itemName} />
           </NavLink>
         );
       }
@@ -264,6 +299,24 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         }
       />
       <List>{renderRoutes}</List>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Confirm logout"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText style={{ padding: "10px" }} id="alert-dialog-slide-description">
+            Are you sure, you want to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={logout}>Logout</Button>
+        </DialogActions>
+      </Dialog>
     </SidenavRoot>
   );
 }

@@ -55,7 +55,7 @@ function SidenavCollapse({ icon, name, children, active, noCollapse, open, ...re
             sx={(theme) => collapseIconBox(theme, { transparentSidenav, whiteSidenav, darkMode })}
           >
             {typeof icon === "string" ? (
-              <Icon sx={(theme) => collapseIcon(theme, { active })}>{icon}</Icon>
+              <Icon sx={(theme) => collapseIcon(theme, { active })}>icon</Icon>
             ) : (
               icon
             )}

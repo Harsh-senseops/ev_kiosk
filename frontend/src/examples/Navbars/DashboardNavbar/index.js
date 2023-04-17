@@ -46,6 +46,18 @@ import MDBadge from "components/MDBadge";
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import Button from '@mui/material/Button';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 // Custom styles for DashboardNavbar
 import {
   navbar,
@@ -72,9 +84,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [shift, setShift] = React.useState('');
   const route = useLocation().pathname.split("/").slice(1);
   const navigate = useNavigate()
-  const selectData = {
+  const selectData = {  
     shift: ["Shift 1", "Shift 2", "Shift 3"]
   }
+
+  const [open, setOpen] = React.useState(false);
 
   const handleChange = (event) => {
     setShift(event.target.value);
@@ -144,12 +158,17 @@ function DashboardNavbar({ absolute, light, isMini }) {
     },
   });
 
-  const handleClickAlert = () => {
-    console.log("Go to alert page")
-  }
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   function logout() {
-    localStorage.setItem('isLoggedIn', "false");
+    localStorage.clear();
     navigate("/authentication/sign-in/basic");
   }
 
@@ -177,7 +196,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
             </MDBox>
             <MDBox color={light ? "white" : "inherit"}>
               
-                <IconButton onClick={logout} sx={navbarIconButton} size="small" disableRipple>
+                <IconButton onClick={handleClickOpen} sx={navbarIconButton} size="small" disableRipple>
                   <Icon sx={iconsStyle}>logout</Icon>
                 </IconButton>
              
@@ -220,6 +239,24 @@ function DashboardNavbar({ absolute, light, isMini }) {
           </MDBox>
         )}
       </Toolbar>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Confirm logout"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText style={{padding:"10px"}} id="alert-dialog-slide-description">
+          Are you sure, you want to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={logout}>Logout</Button>
+        </DialogActions>
+      </Dialog>
     </AppBar>
   );
 }

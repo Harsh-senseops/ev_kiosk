@@ -13,6 +13,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import TextField from '@mui/material/TextField';
+import MDAwsomeButton from "components/MDAwsomeButton";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -32,7 +33,7 @@ const FilterBasic = ({showShift,onPress}) => {
   };
   const dispatch = useDispatch();
   return (
-    <Card style={{background:"#ffffff"}}>
+    <Card style={{background:""}}>
       <Box sx={{ flexGrow: 1 }}>
         <Grid
           container
@@ -42,8 +43,7 @@ const FilterBasic = ({showShift,onPress}) => {
           justifyContent="flex-end"
           p={1}
         >
-
-          <Grid item xs={2.1}>
+          <Grid item xs={2.5}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                             views={['year', 'month', 'day']}
@@ -71,9 +71,11 @@ const FilterBasic = ({showShift,onPress}) => {
             />
           </Grid>:""}
           <Grid item>
-            <MDButton onClick={onPress} variant="gradient" color="info">
+            {/* <MDButton onClick={onPress} variant="gradient" color="info">
               Apply
-            </MDButton>
+            </MDButton> */}
+
+            <MDAwsomeButton name="Apply" onPress={onPress}/>
           </Grid>
         </Grid>
       </Box>

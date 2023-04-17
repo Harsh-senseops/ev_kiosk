@@ -27,11 +27,29 @@ import MDBox from "components/MDBox";
 
 // Custom styles for the SidenavItem
 import { item, itemContent, itemArrow } from "examples/Sidenav/styles/sidenavItem";
+import icon from "../../assets/icons/production.png";
 
 // Material Dashboard 2 PRO React contexts
 import { useMaterialUIController } from "context";
+import { ListItemIcon } from "@mui/material";
+import {
+  collapseIconBox,
+  collapseIcon,
+} from "examples/Sidenav/styles/sidenavCollapse";
 
-function SidenavItem({ color, name, active, nested, children, open, ...rest }) {
+
+const iconStyle = {
+  display: "inline-block",
+  alignItems: "center",
+  position: "absolute",
+  top: "55%",
+  transform: "translateY(-50%)",
+  opacity: 1,
+  borderRadius: "50%",
+  left:"-20px"
+}
+
+function SidenavItem({ color, icon, name, active, nested, children, open, ...rest }) {
   const [controller] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode } = controller;
 
@@ -56,7 +74,29 @@ function SidenavItem({ color, name, active, nested, children, open, ...rest }) {
             })
           }
         >
-          <ListItemText primary={name} />
+          {/* <div style={iconStyle}>
+            <Icon size="xl">
+              {icon}
+            </Icon> */}
+          <ListItemIcon
+            sx={(theme) => collapseIconBox(theme, { transparentSidenav, whiteSidenav, darkMode })}
+          >
+           
+            {typeof icon === "string" ? (
+               <div style={iconStyle}> 
+              <Icon sx={(theme) => collapseIcon(theme, { active })}>icon</Icon>
+                </div> 
+            ) : (
+              <div style={iconStyle}>
+              {icon}
+              </div>
+            )}
+            {/* </div> */}
+          </ListItemIcon>
+          <span style={{position:"absolute"}}>
+            {name}
+          </span>
+          
           {children && (
             <Icon
               component="i"

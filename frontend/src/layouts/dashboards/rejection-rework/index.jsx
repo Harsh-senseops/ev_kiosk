@@ -9,8 +9,9 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
+import { Provider } from "urql";
 // import FullScreenDialog from "components/PPDilougeBar/PPDialog";
-import MachineTable from "layouts/authentication/components/tables/MachineTables";
+import MachineTable from "components/tables/MachineTables";
 import { CardContent } from "@mui/material";
 import FilterBasic from "layouts/dashboards/ev-dashboard/FilterBasic";
 import { R_MACHINE_DATA,ADD_R_P_PHENOMENA_RECORDS,RP_PHENOMENA_LENGTH,ADD_R_PHYSICAL_PHENOMENA,ADD_R_ACTION_TAKEN } from "queries/allQueries";
@@ -22,6 +23,11 @@ function RejectionRework() {
     const [data1,setData] = React.useState("")
     const [index, setIndex] = React.useState(0);
     const [action, setAction] = React.useState("");
+    const [ignored, forceUpdate] = React.useReducer(x => x + 1, 0);
+
+    function handleClick() {
+      forceUpdate();
+    }
     const [open, setOpen] = React.useState(false);
     const [actionTakenValue, setActionTakenValue] = React.useState("");
     const [shouldPause,setShouldPause] = React.useState(true)
@@ -185,12 +191,22 @@ function RejectionRework() {
         refresh();
       };
   return (
-    <>
+    <Provider
+    value={{
+      url: 'http://localhost:4000/graphql',
+      fetchOptions: () => {
+        const token = localStorage.getItem('TOKEN_KEY');
+        return {
+          headers: {
+            Authorization: token ? token : '',
+          },
+        };
+      },
+    }} 
+    >
       <Grid mt={2}>
-        <Grid item xs={12} md={12}>
-          <CardContent style={{ background: "#ffffff" }}>
+        <Grid item xs={12} md={12} mb={2}>
             <FilterBasic onPress={pushData} />
-          </CardContent>
         </Grid>
         <MachineTable
           data={data1}
@@ -238,7 +254,7 @@ function RejectionRework() {
           </DialogActions>
         </Dialog>
       </Grid>
-    </>
+    </Provider>
   );
 }
 

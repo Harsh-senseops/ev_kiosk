@@ -41,6 +41,8 @@ import Settings from "layouts/pages/account/settings";
 import SignInBasic from "layouts/authentication/sign-in/basic";
 import ProtectedRoute from "util/ProtectedRoute";
 import PlannedProduction from "layouts/dashboards/planned-production";
+import CostOfLossdData from "layouts/dashboards/cost-of-loss-data";
+import GlueData from "layouts/dashboards/glue-data";
 
 // Material Dashboard 2 PRO React components
 import MDAvatar from "components/MDAvatar";
@@ -49,8 +51,14 @@ import MDAvatar from "components/MDAvatar";
 import Icon from "@mui/material/Icon";
 // import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
-// Images
-import adminImg from "assets/images/admin.jpg"
+// Icons
+import adminImg from "assets/images/admin.jpg";
+import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
+import ScaleIcon from '@mui/icons-material/Scale';
+import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const productionRoutes = [
   {
@@ -62,18 +70,21 @@ const productionRoutes = [
       {
         name: "Profile",
         key: "my-profile",
+        icon:<AccountCircleIcon/>,
         route: "/pages/profile/profile-overview",
         component:  <ProtectedRoute Component = {ProfileOverview} />,
       },
       {
         name: "Settings",
         key: "profile-settings",
+        icon:<SettingsIcon/>,
         route: "/pages/account/settings",
         component: <ProtectedRoute Component = {Settings} />,
       },
       {
         name: "Logout",
         key: "logout",
+        icon:<LogoutIcon/>,
         route: "/authentication/sign-in/basic",
         component: <ProtectedRoute Component = {SignInBasic} />,
       },
@@ -89,8 +100,23 @@ const productionRoutes = [
       {
         name: "Planned Production",
         key: "planned-production",
+        icon:<PrecisionManufacturingIcon/>,
         route: "/dashboards/planned-production",
         component:  <ProtectedRoute Component = {PlannedProduction} />,
+      },
+      {
+        name: "Cost of loss data",
+        key: "cost-of-loss-data",
+        icon:<InsertPageBreakIcon/>,
+        route: "/dashboards/cost-of-loss-data",
+        component:  <ProtectedRoute Component = {CostOfLossdData} />,
+      },
+      {
+        name: "Glue Loss Weight",
+        key: "glue-data",
+        icon:<ScaleIcon/>,
+        route: "/dashboards/glue-data",
+        component:  <ProtectedRoute Component = {GlueData} />,
       }
     ],
   },

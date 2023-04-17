@@ -3,11 +3,7 @@ import Grid from "@mui/material/Grid";
 import "../pp.css";
 import { useQuery } from "urql";
 import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useMutation } from "urql";
 import { useSelector } from "react-redux";
@@ -19,11 +15,10 @@ import {
   ADD_ACTION_TABLE,
   TODAYS_PP_RECORDS,
 } from "queries/allQueries";
-import MDButton from "components/MDButton";
 // import FullScreenDialog from "components/PPDilougeBar/PPDialog";
 import { useDispatch } from "react-redux";
 import alertAndLoaders from "util/alertAndLoaders";
-import MachineTable from "layouts/authentication/components/tables/MachineTables";
+import MachineTable from "components/tables/MachineTables";
 import { CardContent } from "@mui/material";
 import FilterBasic from "layouts/dashboards/ev-dashboard/FilterBasic";
 
@@ -37,6 +32,11 @@ function PhysicalPhenomenaTable() {
   const [open, setOpen] = React.useState(false);
   const [data1, setData] = React.useState("");
   const [index, setIndex] = React.useState(0);
+  const [ignored, forceUpdate] = React.useReducer(x => x + 1, 0);
+
+  function handleClick() {
+    forceUpdate();
+  }
   const [machineDataResult, reExecMachineDataResult] = useQuery({
     query: MACHINE_DATA,
     pause: shouldPause,
@@ -67,7 +67,7 @@ function PhysicalPhenomenaTable() {
   const [updatedMachineRecordsResult, updateMachineRecords] = useMutation(ADD_MACHINE_RECORDS);
   const [actionTakenValue, setActionTakenValue] = React.useState("");
   const { data, fetching, error } = machineDataResult;
-  const batteryPackRef = React.useRef(null);
+  // const MemoizedMachineTable = React.memo(MachineTable);
 
   React.useEffect(() => {
     if (!data1) {
@@ -82,73 +82,104 @@ function PhysicalPhenomenaTable() {
 
   const handleSelectValues = (i, e, val) => {
     if (val === "pp") {
-      let obj = [...data1];
-      obj[i].value = e.target.value;
-      obj[i].action_taken_value = "";
-      setData(obj);
+      // let obj = [...data1];
+      // obj[i].value = e.target.value;
+      // obj[i].action_taken_value = "";
+      // setData(obj);
+      setData(prevData => {
+        const newData = [...prevData];
+        newData[i].value = e.target.value;
+        newData[i].action_taken_value = "";
+        return newData;
+      });
     } else {
-      let obj = [...data1];
-      obj[i].action_taken_value = e.target.value;
-      setData(obj);
+      // let obj = [...data1];
+      // obj[i].action_taken_value = e.target.value;
+      // setData(obj);
+      setData(prevData => {
+        const newData = [...prevData];
+        // newData[i].value = e.target.value;
+        newData[i].action_taken_value = e.target.value;
+        return newData;
+      });
     }
   };
 
-  const handleClickOpen = (i, add) => {
-    let obj = [...data1];
-    setIndex(i);
-    setAction(add);
-    setFromDilougeBar(add);
-    if (add === "addActionTaken") {
-      obj[index].physicalPhenomena.map((val) => {
-        if (obj[index].value === val.phenomena_name) {
-          alertAndLoaders("SHOW_ALERT", dispatch);
-          updateActionTaken({
-            pActionTakenId: val.phenomena_no,
-            actionTaken: actionTakenValue,
-          }).then((result) => {
-            if (result.error) {
-              alertAndLoaders("UNSHOW_ALERT", dispatch, "Error 404 Not Found", "error");
-              return;
-            }
-            alertAndLoaders("UNSHOW_ALERT", dispatch, "Action Taken added successfully", "success");
-            refresh();
-            setOpen(!open);
-            return;
-          });
-        }
-      });
-    } else if (add === "addP_Phenomena") {
-      alertAndLoaders("SHOW_ALERT", dispatch);
-      updatePhysicalPhenomena({
-        pMachineId: index + 1,
-        phenomenaNo: pPhenomenaLength.data.getPhysicalPhenomenaLength.length + 1,
-        phenomenaName: actionTakenValue,
-      }).then((result) => {
-        if (result.error) {
-          alertAndLoaders("UNSHOW_ALERT", dispatch, "Error 404 Not Found", "error");
+  const handleClickOpen = React.useCallback(
+    (i, add) => {
+      console.log("Iran from handle click")
+      setOpen(!open);
+      let obj = [...data1];
+      setIndex(i);
+      setAction(add);
+      setFromDilougeBar(add);
+      if (add === "addActionTaken") {
+        if (actionTakenValue === "") {
+          alertAndLoaders("UNSHOW_ALERT", dispatch, "Values cannot be empty", "warning");
           return;
         }
-        alertAndLoaders(
-          "UNSHOW_ALERT",
-          dispatch,
-          "Physical Phenomena added sucessfully",
-          "success"
-        );
-        refresh();
-        setOpen(!open);
-        return;
-      });
-    }
-    setOpen(!open);
-  };
-
+        obj[index].physicalPhenomena.map((val) => {
+          if (obj[index].value === val.phenomena_name) {
+            alertAndLoaders("SHOW_ALERT", dispatch);
+            updateActionTaken({
+              pActionTakenId: val.phenomena_no,
+              actionTaken: actionTakenValue,
+            }).then((result) => {
+              if (result.error) {
+                alertAndLoaders("UNSHOW_ALERT", dispatch, "Error 404 Not Found", "error");
+                return;
+              }
+              alertAndLoaders(
+                "UNSHOW_ALERT",
+                dispatch,
+                "Action Taken added successfully",
+                "success"
+              );
+              refresh();
+              setOpen(!open);
+              return;
+            });
+          }
+        });
+      } else if (add === "addP_Phenomena") {
+        if (actionTakenValue === "") {
+          alertAndLoaders("UNSHOW_ALERT", dispatch, "Values cannot be empty", "warning");
+          // setOpen(!open);
+          return;
+        }
+        alertAndLoaders("SHOW_ALERT", dispatch);
+        updatePhysicalPhenomena({
+          pMachineId: index + 1,
+          phenomenaNo: pPhenomenaLength.data.getPhysicalPhenomenaLength.length + 1,
+          phenomenaName: actionTakenValue,
+        }).then((result) => {
+          if (result.error) {
+            alertAndLoaders("UNSHOW_ALERT", dispatch, "Error 404 Not Found", "error");
+            return;
+          }
+          alertAndLoaders(
+            "UNSHOW_ALERT",
+            dispatch,
+            "Physical Phenomena added sucessfully",
+            "success"
+          );
+          refresh();
+          setOpen(!open);
+          return;
+        });
+      }
+    },
+    [open]
+  );
+  console.log("Iran from ppparent")
   const pushData = () => {
+    console.log("Iran from pushdata")
     const arr = [];
     let i = 0;
     let isTrue = true;
     data1.map((val) => {
       if (val.value) {
-        if (!val.action_taken_value) {
+        if (!val.action_taken_value || val.battery_pack_id === "") {
           isTrue = false;
           return;
         }
@@ -166,22 +197,22 @@ function PhysicalPhenomenaTable() {
       }
     });
 
-    if (todayspprResults.data) {
-      todayspprResults.data.getTodaysPhysicalPhenomena.map((todaysVal) => {
-        arr.map((arrVal) => {
-          if (
-            todaysVal.phenomena_no === arrVal.phenomenaNo &&
-            todaysVal.action_taken === arrVal.actionTaken
-          ) {
-            isTrue = false;
-            return;
-          }
-        });
-      });
-    }
+    // if (todayspprResults.data) {
+    //   todayspprResults.data.getTodaysPhysicalPhenomena.map((todaysVal) => {
+    //     arr.map((arrVal) => {
+    //       if (
+    //         todaysVal.phenomena_no === arrVal.phenomenaNo &&
+    //         todaysVal.action_taken === arrVal.actionTaken
+    //       ) {
+    //         isTrue = false;
+    //         return;
+    //       }
+    //     });
+    //   });
+    // }
 
-    if (!isTrue) {
-      alertAndLoaders("Error duplicate values encountered", "error", dispatch);
+    if (!isTrue || arr.length === 0) {
+      alertAndLoaders("UNSHOW_ALERT", dispatch, "Please select appropriate values", "warning");
       return;
     }
 
@@ -199,17 +230,17 @@ function PhysicalPhenomenaTable() {
           return;
         }
         alertAndLoaders("UNSHOW_ALERT", dispatch, "Machine data added successfully", "success");
+        refresh();
       });
     });
     refresh();
+    
   };
   return (
     <>
       <Grid mt={2}>
-        <Grid item xs={12} md={12}>
-          <CardContent style={{ background: "#ffffff" }}>
-            <FilterBasic onPress={pushData} />
-          </CardContent>
+        <Grid item xs={12} md={12} mb={2}>
+          <FilterBasic onPress={pushData} />
         </Grid>
         <MachineTable
           data={data1}
@@ -261,4 +292,4 @@ function PhysicalPhenomenaTable() {
   );
 }
 
-export default React.memo(PhysicalPhenomenaTable);
+export default PhysicalPhenomenaTable;

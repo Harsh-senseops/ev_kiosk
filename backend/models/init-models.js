@@ -2,6 +2,8 @@ var DataTypes = require("sequelize").DataTypes;
 var _PlannedProductionCount = require("./PlannedProductionCount");
 var _ZoneNames = require("./ZoneNames");
 var _action_taken = require("./action_taken");
+var _cost_of_loss_data = require("./cost_of_loss_data");
+var _glue_loss_weight = require("./glue_loss_weight");
 var _machine = require("./machine");
 var _p_phenomena = require("./p_phenomena");
 var _p_phenomena_records = require("./p_phenomena_records");
@@ -17,6 +19,8 @@ function initModels(sequelize) {
   var PlannedProductionCount = _PlannedProductionCount(sequelize, DataTypes);
   var ZoneNames = _ZoneNames(sequelize, DataTypes);
   var action_taken = _action_taken(sequelize, DataTypes);
+  var cost_of_loss_data = _cost_of_loss_data(sequelize, DataTypes);
+  var glue_loss_weight = _glue_loss_weight(sequelize, DataTypes);
   var machine = _machine(sequelize, DataTypes);
   var p_phenomena = _p_phenomena(sequelize, DataTypes);
   var p_phenomena_records = _p_phenomena_records(sequelize, DataTypes);
@@ -49,6 +53,8 @@ function initModels(sequelize) {
     PlannedProductionCount,
     ZoneNames,
     action_taken,
+    cost_of_loss_data,
+    glue_loss_weight,
     machine,
     p_phenomena,
     p_phenomena_records,

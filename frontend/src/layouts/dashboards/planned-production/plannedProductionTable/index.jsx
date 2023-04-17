@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
+// import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import React, { useState } from "react";
 import typography from "assets/theme/base/typography";
 import { useQuery } from "urql";
@@ -18,6 +18,27 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import LinearProgress from "@mui/material/LinearProgress";
 import { FIND_PRODUCTION_BY_SHIFT } from "queries/allQueries";
+import styled from "@emotion/styled";
+
+const tableRowStyle = {
+  fontSize:"16px",
+  opacity:"0.7.8",
+  color:"white",
+  fontWeight:"400"
+}
+
+const TableRowStyled = styled(TableRow)`
+  &:nth-of-type(odd) {
+    background-color: #EFF5F5;
+    height: 20px;
+  }
+  &:nth-of-type(even) {
+    background-color: #D6E4E5;
+  }
+  & > td {
+    color: red;
+  } 
+`;
 
 function PlannedProductionTable() {
   const [columns, setColumns] = useState([
@@ -156,17 +177,9 @@ function PlannedProductionTable() {
     dispatch(action.setProductionCount(obj));
   }, [data]);
 
-  const theme = createTheme({
-    palette: {
-      typography: {
-        fontFamily: typography.fontFamily,
-        fontSize: 4,
-        fontWeightLight: 300,
-        fontWeightRegular: 400,
-        fontWeightMedium: 500,
-      },
-    },
-  });
+  React.useEffect(() => {
+    dispatch(action.setShift("Shift 1"));
+  }, []);
 
   return (
     <>
@@ -174,28 +187,28 @@ function PlannedProductionTable() {
       <Grid mt={2}>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableRow style={{ background: "#3c3c43" }}>
-              <TableCell>
-                <b style={{ color: "#ecf2ff" }}>Zone</b>
+            <TableRow style={{background:"linear-gradient(90deg, rgba(58,180,115,1) 0%, rgba(29,192,253,1) 100%)"}}>
+              <TableCell style={tableRowStyle}>
+                Zone
               </TableCell>
-              <TableCell>
-                <b style={{ color: "#ecf2ff" }}>Planned Production Count</b>
-              </TableCell>
-             <TableCell align="right">
-                <b style={{ color: "#ecf2ff" }}>Actions</b>
+              <TableCell style={tableRowStyle}>
+                Planned Production Count
+              </TableCell >
+             <TableCell align="right" style={tableRowStyle}>
+                Actions
               </TableCell>
             </TableRow>
 
             <TableBody>
               {data.map((row, i) => (
-                <TableRow
+                <TableRowStyled
                   key={row.zone}
-                  sx={{ "&:nth-of-type(odd)": { backgroundColor: "#ECF2FF" } }}
+                  // sx={{ "&:nth-of-type(odd)": { backgroundColor: "#ECF2FF" } }}
                 >
-                  <TableCell component="th" scope="row">
+                  <TableCell style={{fontWeight:"400",opacity:"0.8",fontSize:"14px"}} component="th" scope="row">
                     {row.zone}
                   </TableCell>
-                  <TableCell component="th" scope="row">
+                  <TableCell style={{fontWeight:"400",opacity:"0.8",fontSize:"14px"}} component="th" scope="row">
                     {show[i] ? (
                       <TextField
                         id="outlined-password-input"
@@ -225,7 +238,7 @@ function PlannedProductionTable() {
                       </>
                     )}
                   </TableCell>
-                </TableRow>
+                </TableRowStyled>
               ))}
             </TableBody>
           </Table>

@@ -1,7 +1,6 @@
 type Query {
   getAllZonesDetails: [Zones]
   getAllProductionDetails: [ProductionCountDetails]
-  validateUser(userName:String!): [Users]
   getTodayProductionCount: [ProductionCountDetails]
   findProductionByShift(Shift:String!): [ProductionCountDetails]
   getAllMachines: [Machine]
@@ -12,6 +11,7 @@ type Query {
   getTodaysPhysicalPhenomena: [PPRecords]
   getPhysicalPhenomenaBasedOnDate(date:String!): [PPRecords]
   getAllRejectionWorkMachineData: [MachineData]
+  validateUser(user_name: String!, user_password: String!): AuthData!
 }
 
 type ProductionCountDetails {
@@ -118,6 +118,12 @@ type PPRecords {
   battery_pack_id: String
 }
 
+type AuthData {
+  userId: String!
+  token: String!
+  tokenExpiration: Int!
+}
+
 type RPPRecords {
   r_ppr_Id: Int
   r_date: DateTime
@@ -131,6 +137,20 @@ type RPPRecords {
 type R_MACHINE_DATA{
   r_machine_id: Int
   r_machine_name: String
+}
+
+type GlueLoss{
+ m_id: Int
+ g_machine_name: String
+ glue_loss: String
+ g_shift: String
+}
+
+type LossOfData {
+ c_id:Int
+ c_machine_name: String
+ loss_data: Int
+ c_shift: String
 }
 
 type Mutation {
@@ -191,6 +211,18 @@ type Mutation {
   user_roles_role: Int
   user_machine_id: Int
   ):Users
+
+  addGlueLossData(
+  g_machine_name: String
+  glue_loss: Int
+  g_shift: String
+  ):GlueLoss
+
+  addCostOfLossData(
+  c_machine_name: String
+  loss_data: Int
+  c_shift: String
+  ):LossOfData
 }
 
 type Subscription {

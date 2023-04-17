@@ -35,11 +35,15 @@ import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import { useQuery } from "urql";
+import loginBg from "../../../../assets/images/login-bg.jpg"
 import { VALIDATE_USER } from "queries/allQueries";
+import jwt_decode from "jwt-decode";
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 import { useSelector, useDispatch } from "react-redux";
+import "../../../../components/MDAwsomeButton/index.css"
 import * as action from "reduxSlices/userRoles";
+import "./login.css"
 // Images
 
 function Basic() {
@@ -51,56 +55,73 @@ function Basic() {
   const navigate = useNavigate();
   const [userResult, reExecUserRResult] = useQuery({
     query: VALIDATE_USER,
-    variables: {userName},
-    pause:userName ? false : true
+    variables: {userName:userName,userPassword:password},
+    pause:userName && password ? false : true
   });
   const { data, fetching, error } = userResult;
   const dispatch = useDispatch();
 
-  const showError = () => {
-    if(error){
-      return (
-        <h1>error</h1>
-      )
-    }
-  }
+  // const showError = () => {
+  //   if(error){
+  //     return (
+  //       <h1>error</h1>
+  //     )
+  //   }
+  // }
+  console.log(userResult)
 
   useEffect(() => {
-    if (data) {
-      if (data.validateUser[0]) {
-        console.log(data.validateUser);
-        if (
-          data.validateUser[0].user_name === userName &&
-          data.validateUser[0].user_password === password
-        ) {
-          // alert("True");
-          let machinesIds = []
-          data.validateUser.map((val)=>{
-            machinesIds.push(val.user_machine_id)
-          })
-          navigate("/dashboards/analytics")
-          localStorage.setItem('isLoggedIn', JSON.stringify(items));
-          localStorage.setItem("machineID",JSON.stringify(machinesIds))
-          dispatch(action.setRoles(data.validateUser[0].user_roles_role))
-          dispatch(action.setMachines(machinesIds))
-          localStorage.setItem("userRole",JSON.stringify(data.validateUser[0].user_roles_role))
-        }else{
-          if(userName){
-            setErrorMsg("User credentials incorrect")
-          }
-        
-        }
-      }
-      else{
-        if(userName){
-          //if problem in server do whatever you want here
-          // setErrorMsg("User credentials incorrect")
-        }
-        
-      }
+    if(data){
+      let token = data.validateUser?.token;
+      const decoded = jwt_decode(token);
+      let machinesIds = []
+            decoded.machineId?.map((val)=>{
+              machinesIds.push(val)
+            })
+      navigate("/dashboards/analytics")
+      localStorage.setItem('TOKEN_KEY',token);
+      dispatch(action.setRoles(decoded.userRole))
+      dispatch(action.setMachines(machinesIds))
+      setErrorMsg("User Authenticated")
+
     }
+    if(error){
+      setErrorMsg("Incorrect user credentials")
+    }
+    // if (data) {
+    //   if (data.validateUser[0]) {
+    //     console.log(data.validateUser);
+    //     if (
+    //       data.validateUser[0].user_name === userName &&
+    //       data.validateUser[0].user_password === password
+    //     ) {
+    //       // alert("True");
+    //       let machinesIds = []
+    //       data.validateUser.map((val)=>{
+    //         machinesIds.push(val.user_machine_id)
+    //       })
+    //       navigate("/dashboards/analytics")
+    //       localStorage.setItem('isLoggedIn', JSON.stringify(items));
+    //       localStorage.setItem("machineID",JSON.stringify(machinesIds))
+    //       dispatch(action.setRoles(data.validateUser[0].user_roles_role))
+    //       dispatch(action.setMachines(machinesIds))
+    //       localStorage.setItem("userRole",JSON.stringify(data.validateUser[0].user_roles_role))
+    //     }else{
+    //       // if(userName || data.validateUser.length === 0){ 
+    //         setErrorMsg("User credentials incorrect")
+    //       // }
+        
+    //     }
+    //   }
+    //   else{
+    //     if(data.validateUser.length === 0){
+    //       //if problem in server do whatever you want here
+    //       setErrorMsg("User credentials incorrect")
+    //     }
+        
+    //   }
+    // }
   }, [userResult]);
-console.log(userResult)
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const handleEmail = (e) => {
@@ -116,12 +137,14 @@ console.log(userResult)
     setUserName(e.target.userName.value);
     setPassword(e.target.password.value);
     reExecUserRResult();
-    // localStorage.setItem('isLoggedIn', JSON.stringify(items));
+    // localStorage.setItem('isLoggedIn', JSON.stringify(true));
     // navigate("/dashboards/analytics");
   };
-  localStorage.clear()
 
   return (
+    <div style={{backgroundImage:`url(${loginBg})`, backgroundRepeat: "no-repeat",
+    backgroundSize: "cover"}}>
+      {/* <h1>{JSON.stringify(data)}</h1> */}
     <BasicLayout>
       <Card>
         <MDBox
@@ -139,7 +162,7 @@ console.log(userResult)
             Login
           </MDTypography>
         </MDBox>
-        {showError()}
+        {/* {showError()} */}
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form" onSubmit={(e) => handleSubmit(e)}>
             <MDBox mb={2}>
@@ -150,7 +173,7 @@ console.log(userResult)
               {errorMsg ? <span style={{fontSize:"13px",marginLeft:"10px",color:"red"}}>{errorMsg}</span>:""}
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth type="submit">
+              <MDButton class="button-30" style={{width:"100%"}} variant="gradient" color="info" fullWidth type="submit">
                 Login
               </MDButton>
             </MDBox>
@@ -172,6 +195,7 @@ console.log(userResult)
         </MDBox>
       </Card>
     </BasicLayout>
+    </div>
   );
 }
 

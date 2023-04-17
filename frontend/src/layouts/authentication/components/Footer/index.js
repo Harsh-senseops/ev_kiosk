@@ -50,12 +50,14 @@ function Footer({ light }) {
             color={light ? "white" : "text"}
             fontSize={size.sm}
           >
+            <span style={{background:"#DAEAF1",padding:"3px"}}>
             &copy; {new Date().getFullYear()}, made by
             <Link href="https://www.creative-tim.com/" target="_blank">
               <MDTypography variant="button" fontWeight="medium" color={light ? "white" : "dark"}>
                 &nbsp;Senseops&nbsp;
               </MDTypography>
             </Link>
+            </span>
           </MDBox>
           <MDBox
             component="ul"
@@ -81,7 +83,7 @@ function Footer({ light }) {
                   fontWeight="regular"
                   color={light ? "white" : "dark"}
                 >
-                  Senseops
+                 <span style={{background:"#DAEAF1",padding:"3px"}}> Senseops </span>
                 </MDTypography>
               </Link>
             </MDBox>
@@ -92,7 +94,7 @@ function Footer({ light }) {
                   fontWeight="regular"
                   color={light ? "white" : "dark"}
                 >
-                  About Us
+                 <span style={{background:"#DAEAF1",padding:"3px"}}> About Us</span> 
                 </MDTypography>
               </Link>
             </MDBox>
@@ -103,7 +105,7 @@ function Footer({ light }) {
                   fontWeight="regular"
                   color={light ? "white" : "dark"}
                 >
-                  Blog
+                  <span style={{background:"#DAEAF1",padding:"3px"}}> Blog </span>
                 </MDTypography>
               </Link>
             </MDBox>
@@ -114,7 +116,7 @@ function Footer({ light }) {
                   fontWeight="regular"
                   color={light ? "white" : "dark"}
                 >
-                  License
+                  <span style={{background:"#DAEAF1",padding:"3px"}}> License</span>
                 </MDTypography>
               </Link>
             </MDBox>

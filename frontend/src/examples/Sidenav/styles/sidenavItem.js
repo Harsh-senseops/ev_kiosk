@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
+import productionImg from "../../../assets/icons/production.png"
 function item(theme, ownerState) {
   const { palette, borders, functions, transitions } = theme;
   const { active, color, transparentSidenav, whiteSidenav, darkMode } = ownerState;
@@ -62,7 +63,7 @@ function item(theme, ownerState) {
 
 function itemContent(theme, ownerState) {
   const { palette, typography, transitions, functions } = theme;
-  const { miniSidenav, name, active, transparentSidenav, whiteSidenav, darkMode } = ownerState;
+  const { miniSidenav, name, active, transparentSidenav, whiteSidenav, darkMode,icon } = ownerState;
 
   const { white, dark } = palette;
   const { size, fontWeightRegular, fontWeightLight } = typography;
@@ -92,23 +93,23 @@ function itemContent(theme, ownerState) {
       }),
     },
 
-    "&::before": {
-      content: `"${name[0]}"`,
-      color:
-        ((transparentSidenav && !darkMode) || whiteSidenav) && (active === "isParent" || !active)
-          ? dark.main
-          : white.main,
-      fontWeight: fontWeightRegular,
-      display: "flex",
-      alignItems: "center",
-      position: "absolute",
-      top: "50%",
-      transform: "translateY(-50%)",
-      left: pxToRem(-15),
-      opacity: 1,
-      borderRadius: "50%",
-      fontSize: size.sm,
-    },
+    // "&::before": {
+    //   content: `"${name[0]}"`,
+    //   color:
+    //     ((transparentSidenav && !darkMode) || whiteSidenav) && (active === "isParent" || !active)
+    //       ? dark.main
+    //       : white.main,
+    //   fontWeight: fontWeightRegular,
+    //   display: "inline-block",
+    //   alignItems: "center",
+    //   position: "absolute",
+    //   top: "50%",
+    //   transform: "translateY(-50%)",
+    //   left: pxToRem(-15),
+    //   opacity: 1,
+    //   borderRadius: "50%",
+    //   fontSize: size.sm,
+    // },
   };
 }
 

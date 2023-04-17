@@ -49,8 +49,12 @@ import MDAvatar from "components/MDAvatar";
 import Icon from "@mui/material/Icon";
 // import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
-// Images
+// Icons
 import adminImg from "assets/images/admin.jpg"
+import CachedIcon from '@mui/icons-material/Cached';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const qualityRoutes = [
   {
@@ -62,18 +66,21 @@ const qualityRoutes = [
       {
         name: "Profile",
         key: "my-profile",
+        icon:<AccountCircleIcon/>,
         route: "/pages/profile/profile-overview",
         component:  <ProtectedRoute Component = {ProfileOverview} />,
       },
       {
         name: "Settings",
         key: "profile-settings",
+        icon:<SettingsIcon/>,
         route: "/pages/account/settings",
         component: <ProtectedRoute Component = {Settings} />,
       },
       {
         name: "Logout",
         key: "logout",
+        icon:<LogoutIcon/>,
         route: "/authentication/sign-in/basic",
         component: <ProtectedRoute Component = {SignInBasic} />,
       },
@@ -87,8 +94,9 @@ const qualityRoutes = [
     icon: <Icon fontSize="medium">dashboard</Icon>,
     collapse: [
       {
-        name: "Physical Phenomena",
+        name: "Rejection/Rework",
         key: "physical-phenomena",
+        icon:<CachedIcon/>,
         route: "/dashboards/physical-phenomena",
         component: <ProtectedRoute Component = {PhysicalPhenomena} />,
       }

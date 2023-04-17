@@ -2,21 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Route, useNavigate } from "react-router-dom";
 const ProtectedRoute = ({Component,roles}) => {
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('TOKEN_KEY'));
     console.log("I ran from login",isLoggedIn)
    
     const checkUserToken = () => {
-        const userToken = localStorage.getItem('isLoggedIn');
-        if (!userToken || userToken === 'undefined') {
-            setIsLoggedIn(false);
-       return navigate("/authentication/sign-in/basic")
+        if (!isLoggedIn) { 
+        navigate("/authentication/sign-in/basic")
+        return;
         }
-        setIsLoggedIn(true);
     }
-    // checkUserToken()
     useEffect(() => {
             checkUserToken();
         }, [isLoggedIn]);
+       
     return (
         <React.Fragment>
            <Component/>
